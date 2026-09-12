@@ -1,582 +1,542 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سحابة المشاركة المباشرة السريعة | Cloud Vault P2P</title>
+    <title>مركز مشاركة الملفات والكتب السحابي | Cloud Vault P2P</title>
+    
+    <!-- Google Fonts (Tajawal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- PeerJS for direct WebRTC P2P connection -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    
+    <!-- QRCode Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
                     colors: {
                         brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            900: '#0c4a6e',
+                            50: '#f0f5ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
                         },
-                        neon: {
+                        accent: {
                             cyan: '#06b6d4',
-                            purple: '#a855f7',
-                            pink: '#ec4899',
-                            emerald: '#10b981'
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
                         }
                     },
-                    fontFamily: {
-                        sans: ['Tajawal', 'Inter', 'sans-serif'],
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1', boxShadow: '0 0 15px rgba(99, 102, 241, 0.6)' },
+                            '50%': { opacity: '0.6', boxShadow: '0 0 5px rgba(99, 102, 241, 0.2)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
                     }
                 }
             }
         }
     </script>
-
-    <!-- Google Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- PeerJS WebRTC Direct P2P Engine -->
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-
+    
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background: #070a12;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+            background: #090d16;
             color: #f1f5f9;
-            min-height: 100vh;
             overflow-x: hidden;
         }
-
-        /* Modern Glassmorphism Styling */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        
+        /* Custom animated background ambient mesh */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            filter: blur(40px);
         }
 
+        /* Glassmorphism card utility */
         .glass-card {
-            background: rgba(30, 41, 59, 0.55);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .glass-card:hover {
+        .glass-card-hover:hover {
             transform: translateY(-4px);
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.3);
-        }
-
-        /* Pulse and Glow Effects */
-        .glow-brand {
-            box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.5);
-        }
-
-        .glow-neon {
-            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.5);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.15);
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #090d16;
+            background: rgba(15, 23, 42, 0.6);
         }
         ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
+            background: #334155;
+            border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #0ea5e9;
-        }
-
-        .dir-ltr {
-            direction: ltr;
+            background: #6366f1;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
-    <!-- Header Navigation -->
-    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <!-- Ambient background gradient -->
+    <div class="ambient-bg"></div>
+
+    <!-- Top Header Navigation -->
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
             
-            <!-- App Logo & Title -->
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-neon-purple flex items-center justify-center text-white glow-brand flex-shrink-0">
-                    <i class="fa-solid fa-wifi text-xl animate-pulse"></i>
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-accent-cyan flex items-center justify-center text-white shadow-lg shadow-brand-500/30 animate-float">
+                    <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
-                        <span class="bg-gradient-to-r from-brand-400 via-neon-cyan to-neon-purple bg-clip-text text-transparent">سحابة المشاركة الفورية</span>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">P2P v4.0</span>
+                    <h1 class="text-xl font-black bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                        مركز المشاركة السحابية
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">نقل وتزامن فوري للملفات والكتب بين الأجهزة مباشرة</p>
+                    <p class="text-xs text-slate-400">مشاركة سريعة ومباشرة P2P بدون حدود</p>
                 </div>
             </div>
 
-            <!-- Action Controls & Room Code Badge -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Room Code & Join Button -->
-                <div class="flex items-center gap-2 bg-slate-900/90 border border-brand-500/30 px-3.5 py-1.5 rounded-2xl text-xs shadow-inner">
-                    <span class="text-slate-400 font-medium hidden sm:inline">رمز الغرفة:</span>
-                    <span id="roomCodeDisplay" class="font-mono font-black text-brand-400 tracking-widest text-base">----</span>
-                    <button id="openJoinModalBtn" class="mr-1 text-amber-400 hover:text-amber-300 p-1 transition-transform hover:scale-110" title="إدخال رمز جهاز آخر للربط المباشر">
-                        <i class="fa-solid fa-key text-xs"></i>
-                    </button>
+            <!-- Connection Status & Room Controls -->
+            <div class="flex items-center flex-wrap gap-3">
+                
+                <!-- Active Connection Status Indicator -->
+                <div id="statusBadge" class="flex items-center space-x-2 space-x-reverse px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-300">
+                    <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="statusText">جاري الاتصال بالنظام...</span>
                 </div>
 
-                <!-- Live Connection Radar Counter -->
-                <div id="connectionStatusBadge" class="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 transition-all">
-                    <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-                    <span id="connectedCountText">جاري الاتصال...</span>
+                <!-- Live Connected Devices Counter -->
+                <div class="flex items-center space-x-2 space-x-reverse px-3 py-1.5 rounded-full bg-indigo-950/60 border border-indigo-800/50 text-xs font-semibold text-indigo-300">
+                    <i class="fa-solid fa-users text-indigo-400"></i>
+                    <span>الأجهزة المتصلة:</span>
+                    <span id="peerCount" class="bg-indigo-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">1</span>
                 </div>
 
-                <!-- Share QR / Link Modal Button -->
-                <button id="shareHubBtn" class="p-2.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700/80 hover:border-brand-500/50" title="عرض رمز QR للغرفة">
-                    <i class="fa-solid fa-qrcode text-base text-brand-400"></i>
+                <!-- Join Room Button -->
+                <button onclick="openJoinModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center space-x-2 space-x-reverse transition-all active:scale-95">
+                    <i class="fa-solid fa-[#key] fa-key text-accent-cyan"></i>
+                    <span>إدخال رمز الغرفة</span>
                 </button>
 
-                <!-- Upload File Trigger Button -->
-                <button id="openUploadBtn" class="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-neon-purple hover:opacity-95 text-white font-bold shadow-lg glow-brand transition-all text-xs sm:text-sm">
-                    <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
-                    <span class="hidden sm:inline">مشاركة ملف جديد</span>
-                    <span class="sm:hidden">مشاركة</span>
+                <!-- New Room Button -->
+                <button onclick="createNewRoom()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white shadow-lg shadow-brand-600/30 flex items-center space-x-2 space-x-reverse transition-all active:scale-95">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>غرفة جديدة</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full flex-grow space-y-8">
 
-        <!-- Search, Sorting & Filter Controls -->
-        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <!-- Search Bar -->
-            <div class="relative w-full md:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" placeholder="ابحث باسم الكتاب، الصورة، أو الملف..." class="w-full pr-10 pl-4 py-2.5 bg-slate-900/90 border border-slate-800 rounded-2xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all shadow-inner">
-            </div>
-
-            <!-- Categories, Sorting & View Toggle -->
-            <div class="flex flex-wrap items-center justify-between md:justify-end w-full md:w-auto gap-3">
-                <!-- Categories -->
-                <div class="flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full text-xs">
-                    <button data-category="all" class="category-btn active px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold transition-all shadow-md">الكل</button>
-                    <button data-category="books" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">كتب ومستندات</button>
-                    <button data-category="images" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">صور</button>
-                    <button data-category="media" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">وسائط</button>
-                    <button data-category="other" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">أخرى</button>
+        <!-- Room PIN & Quick Share Banner -->
+        <section class="glass-card rounded-3xl p-6 lg:p-8 relative overflow-hidden border border-slate-700/50">
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div class="space-y-2 text-center md:text-right">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse text-xs font-bold text-accent-cyan bg-cyan-950/60 border border-cyan-800/40 px-3 py-1 rounded-full">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>اتصال مشفر ومباشر بين الأجهزة (WebRTC)</span>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-black text-white">رمز الاقتران المباشر</h2>
+                    <p class="text-sm text-slate-400 max-w-xl">
+                        ادخل هذا الرمز المكون من 4 أرقام في أي جهاز آخر لتوصيلهما فورياً ومشاركة الصور والكتب والملفات بدون رفع على خوادم خارجية.
+                    </p>
                 </div>
 
-                <!-- Sort Control -->
-                <select id="sortSelect" class="bg-slate-900/90 text-xs text-slate-300 border border-slate-800 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-brand-500">
-                    <option value="newest">الأحدث أولاً</option>
-                    <option value="oldest">الأقدم أولاً</option>
-                    <option value="name">حسب الاسم</option>
-                    <option value="size">حسب الحجم</option>
-                </select>
-
-                <!-- View Layout Toggle -->
-                <div class="flex items-center bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 text-xs">
-                    <button id="viewGridBtn" class="p-2 rounded-xl bg-slate-800 text-brand-400 font-bold transition-all" title="عرض شبكي">
-                        <i class="fa-solid fa-border-all"></i>
-                    </button>
-                    <button id="viewListBtn" class="p-2 rounded-xl text-slate-400 hover:text-white transition-all" title="عرض القائمة">
-                        <i class="fa-solid fa-list"></i>
-                    </button>
+                <!-- 4-Digit Room Code Display & Copy -->
+                <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 shadow-inner w-full md:w-auto justify-center">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block mb-1">كود الغرفة الحالي</span>
+                        <div id="roomPinDisplay" class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan via-brand-500 to-accent-emerald font-mono">
+                            ----
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <!-- Copy PIN Button -->
+                        <button onclick="copyRoomLink()" title="نسخ رابط الغرفة" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 hover:text-white transition-all active:scale-95">
+                            <i class="fa-solid fa-copy text-lg"></i>
+                        </button>
+                        <!-- QR Code Button -->
+                        <button onclick="showQRCodeModal()" title="عرض رمز QR" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-accent-cyan hover:text-cyan-300 transition-all active:scale-95">
+                            <i class="fa-solid fa-qrcode text-lg"></i>
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Clear Room Files Button -->
-                <button id="clearRoomBtn" class="p-2.5 rounded-2xl bg-slate-900/90 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-800 transition-all" title="مسح كافة ملفات هذه الغرفة">
-                    <i class="fa-solid fa-trash-arrow-up"></i>
-                </button>
             </div>
-        </div>
+        </section>
 
-        <!-- Dynamic Files Container -->
-        <div id="filesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <!-- Dynamic Content populated via JavaScript -->
-        </div>
-
-        <!-- Empty State View -->
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center space-y-4">
-            <div class="w-24 h-24 rounded-3xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-slate-600 text-4xl shadow-2xl relative">
-                <i class="fa-solid fa-folder-open text-brand-500/50"></i>
-                <span class="w-3 h-3 rounded-full bg-brand-400 absolute top-4 right-4 animate-ping"></span>
-            </div>
-            <div class="space-y-1">
-                <h3 class="text-base font-bold text-slate-200">لا توجد ملفات أو كتب مشاركة في هذه الغرفة</h3>
-                <p class="text-xs text-slate-400 max-w-sm mx-auto">ارفع كتاباً أو صورة من هذا الجهاز، أو قم بربط جهازك الآخر عبر كود الغرفة المكون من 4 أرقام لتظهر الملفات فورياً!</p>
-            </div>
-            <button id="emptyUploadBtn" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs transition-all flex items-center gap-2 shadow-lg glow-brand">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span>رفع أول ملف الآن</span>
-            </button>
-        </div>
-    </main>
-
-    <!-- Upload Modal -->
-    <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-file-arrow-up text-brand-400"></i>
-                    <span>مشاركة ملف أو كتاب جديد</span>
-                </h3>
-                <button id="closeUploadModalBtn" class="text-slate-400 hover:text-white p-1 rounded-xl">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Drag and Drop Dropzone -->
-            <div id="dropzone" class="border-2 border-dashed border-slate-700/80 hover:border-brand-500 rounded-3xl p-8 text-center space-y-3 cursor-pointer bg-slate-950/40 hover:bg-slate-900/80 transition-all">
-                <input type="file" id="fileInput" class="hidden" multiple>
-                <div class="w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-3xl mx-auto shadow-inner">
-                    <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
+        <!-- Drag & Drop Upload Zone -->
+        <section class="glass-card glass-card-hover rounded-3xl p-8 border-2 border-dashed border-slate-700/80 hover:border-brand-500 transition-all text-center relative group cursor-pointer"
+                 id="dropZone"
+                 onclick="document.getElementById('fileInput').click()"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)"
+                 ondrop="handleFileDrop(event)">
+            
+            <input type="file" id="fileInput" multiple class="hidden" onchange="handleFileSelect(event)">
+            
+            <div class="space-y-4 pointer-events-none">
+                <div class="w-16 h-16 rounded-2xl bg-brand-600/20 text-brand-500 border border-brand-500/30 flex items-center justify-center mx-auto text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
                 </div>
                 <div>
-                    <p class="text-sm font-bold text-slate-200">اضغط هنا لاختيار الملفات أو اسحبها إلى هنا</p>
-                    <p class="text-xs text-slate-400 mt-1">يدعم كافة الملفات: الكتب (PDF, EPUB)، الصور، الصوتيات، الفيديوهات والملفات النصية</p>
+                    <h3 class="text-lg font-bold text-white group-hover:text-brand-500 transition-colors">
+                        اسحب الملفات أو الكتب أو الصور هنا لإرسالها فوراً
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        يدعم كافة الصيغ (PDF, EPUB, JPG, PNG, MP4, MP3, ZIP...) بدون حد أقصى للحجم
+                    </p>
+                </div>
+                <div class="inline-flex items-center space-x-2 space-x-reverse bg-slate-800/80 border border-slate-700 px-4 py-2 rounded-xl text-xs text-slate-300">
+                    <i class="fa-solid fa-folder-open text-amber-400"></i>
+                    <span>أو اضغط هنا لاختيار الملفات من جهازك</span>
                 </div>
             </div>
 
-            <!-- Selected File Info & Progress -->
-            <div id="uploadProgressContainer" class="hidden space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
-                <div class="flex items-center justify-between text-xs">
-                    <span id="uploadFileName" class="font-bold text-slate-200 truncate max-w-[200px]">filename.pdf</span>
-                    <span id="uploadFileSize" class="text-slate-400">0 MB</span>
+            <!-- Upload Progress Bar Overlay -->
+            <div id="uploadProgressContainer" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 z-20">
+                <div class="w-full max-w-md space-y-3">
+                    <div class="flex justify-between text-xs font-bold text-slate-300">
+                        <span id="uploadFileName">جاري إرسال الملف...</span>
+                        <span id="uploadPercent">0%</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                        <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-brand-500 to-accent-cyan rounded-full transition-all duration-150 w-0"></div>
+                    </div>
+                    <p id="uploadSpeedText" class="text-xs text-slate-400 text-center">جاري نقل البيانات عبر الـ P2P المباشر...</p>
                 </div>
-                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                    <div id="progressBar" class="bg-gradient-to-r from-brand-400 via-neon-cyan to-neon-purple h-full w-0 transition-all duration-200"></div>
+            </div>
+        </section>
+
+        <!-- Filter & Search Section -->
+        <section class="space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                <!-- Category Filters -->
+                <div class="flex items-center overflow-x-auto pb-2 md:pb-0 gap-2 no-scrollbar">
+                    <button onclick="setFilter('all')" class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-brand-600 text-white shadow-md shadow-brand-600/30" data-category="all">
+                        <i class="fa-solid fa-border-all ml-1"></i> الكل (<span id="countAll">0</span>)
+                    </button>
+                    <button onclick="setFilter('books')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="books">
+                        <i class="fa-solid fa-book ml-1 text-emerald-400"></i> الكتب والمستندات (<span id="countBooks">0</span>)
+                    </button>
+                    <button onclick="setFilter('images')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="images">
+                        <i class="fa-solid fa-image ml-1 text-cyan-400"></i> الصور (<span id="countImages">0</span>)
+                    </button>
+                    <button onclick="setFilter('media')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="media">
+                        <i class="fa-solid fa-photo-film ml-1 text-rose-400"></i> الوسائط (<span id="countMedia">0</span>)
+                    </button>
+                    <button onclick="setFilter('others')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="others">
+                        <i class="fa-solid fa-box-archive ml-1 text-amber-400"></i> ملفات أخرى (<span id="countOthers">0</span>)
+                    </button>
                 </div>
-                <p id="uploadStatusText" class="text-[11px] text-brand-400 font-bold text-center">جاري معالجة ونقل الملف بين الأجهزة...</p>
+
+                <!-- Search Input & Clear All -->
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-grow md:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="text" id="searchInput" oninput="renderFiles()" placeholder="ابحث باسم الملف..." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-3 pr-9 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors">
+                    </div>
+                    <button onclick="confirmClearAllFiles()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-rose-950/40 border border-slate-700 hover:border-rose-800/50 text-slate-400 hover:text-rose-400 text-xs transition-colors" title="مسح قائمة الملفات">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="flex justify-end gap-2 pt-2">
-                <button id="cancelUploadBtn" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all">إلغاء</button>
+            <!-- Files Grid View -->
+            <div id="filesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- File items dynamically inserted here -->
+            </div>
+
+            <!-- Empty State Display -->
+            <div id="emptyState" class="glass-card rounded-3xl p-12 text-center space-y-4 border border-slate-800">
+                <div class="w-20 h-20 rounded-full bg-slate-800/60 border border-slate-700 flex items-center justify-center mx-auto text-3xl text-slate-500">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <div>
+                    <h4 class="text-base font-bold text-slate-300">لا توجد ملفات في هذه الغرفة بعد</h4>
+                    <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                        قم برفع صور أو كتب أو ملفات، وسوف تظهر فوراً لدى جميع الأجهزة المتصلة بكود الغرفة.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal 1: Join Room Modal -->
+    <div id="joinModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 lg:p-8 max-w-md w-full border border-slate-700 space-y-6 animate-float">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                        <i class="fa-solid fa-[#key] fa-key text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">الانضمام لغرفة مشاركة</h3>
+                        <p class="text-xs text-slate-400">ادخل رمز الـ 4 أرقام المكتوب في الجهاز الرئيسي</p>
+                    </div>
+                </div>
+                <button onclick="closeJoinModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- 4 Digits Input -->
+            <div class="flex justify-center dir-ltr gap-3">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 0)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 1)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 2)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 3)">
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="submitJoinRoom()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-accent-cyan font-bold text-sm text-white shadow-lg shadow-brand-600/30 transition-all active:scale-95">
+                    انضمام للغرفة الآن
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Share Room & QR Modal -->
-    <div id="shareHubModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-5 text-center">
-            <div class="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-2xl mx-auto shadow-inner">
-                <i class="fa-solid fa-qrcode"></i>
-            </div>
-            <div>
-                <h3 class="text-base font-bold text-white">افتح الصفحة على أي جهاز آخر للاقتران المباشر</h3>
-                <p class="text-xs text-slate-400 mt-1">رمز الغرفة المباشر الخاص بك: <span id="shareModalRoomCode" class="font-bold font-mono text-brand-400 text-lg tracking-widest"></span></p>
-            </div>
-
-            <div class="p-3 bg-slate-950/90 rounded-2xl border border-slate-800 flex items-center gap-2">
-                <input type="text" id="shareUrlInput" readonly class="bg-transparent text-xs text-slate-300 w-full focus:outline-none text-left font-mono">
-                <button id="copyShareUrlBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-xs font-bold text-white flex-shrink-0 transition-all shadow-md">
-                    نسخ
+    <!-- Modal 2: QR Code Share Modal -->
+    <div id="qrModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 max-w-sm w-full border border-slate-700 text-center space-y-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-bold text-white">رمز الـ QR الخاص بالفرقة</h3>
+                <button onclick="closeQRCodeModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div class="flex justify-center p-4 bg-white rounded-2xl shadow-xl w-fit mx-auto">
-                <div id="qrCodeContainer">
-                    <!-- QR Code generated dynamically -->
-                </div>
-            </div>
+            <div class="p-4 bg-white rounded-2xl inline-block shadow-xl" id="qrcodeContainer"></div>
 
-            <button id="closeShareHubBtn" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">
-                إغلاق
-            </button>
+            <p class="text-xs text-slate-400">
+                امسح هذا الرمز بكاميرا الهاتف للاتصال والوصول للملفات مباشرة
+            </p>
         </div>
     </div>
 
-    <!-- Join Room PIN Modal -->
-    <div id="joinRoomModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl text-center space-y-5">
-            <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl mx-auto shadow-inner">
-                <i class="fa-solid fa-key"></i>
+    <!-- Modal 3: Media & Document Previewer -->
+    <div id="previewModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-lg hidden flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b border-slate-800 glass-card">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <i id="previewIcon" class="fa-solid fa-file text-brand-500 text-xl"></i>
+                <span id="previewTitle" class="text-sm font-bold text-white truncate max-w-xs md:max-w-md">معاينة الملف</span>
             </div>
-            <div>
-                <h3 class="text-base font-bold text-white">الاقتران بجهاز آخر</h3>
-                <p class="text-xs text-slate-400 mt-1">أدخل رمز الغرفة المكون من 4 أرقام الظاهر على الجهاز الأول</p>
-            </div>
-
-            <div class="flex justify-center dir-ltr">
-                <input type="text" maxlength="4" id="pinCodeInput" placeholder="1234" class="w-48 text-center text-3xl font-mono font-black tracking-widest px-4 py-2.5 bg-slate-950 border border-brand-500/50 rounded-2xl text-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-inner">
-            </div>
-
-            <div class="flex gap-2">
-                <button id="confirmJoinRoomBtn" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-xs font-bold text-white transition-all shadow-md">
-                    ربط الجهازين الآن
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <button id="previewDownloadBtn" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white transition-all">
+                    <i class="fa-solid fa-download ml-1"></i> تحميل
                 </button>
-                <button id="generateNewRoomBtn" class="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all" title="توليد كود جديد لجهازك">
-                    رمز جديد
-                </button>
-                <button id="closeJoinRoomBtn" class="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-400 transition-all">
-                    إلغاء
+                <button onclick="closePreviewModal()" class="p-2 text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Enhanced Preview Modal -->
-    <div id="previewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-6">
-        <div class="glass-panel w-full max-w-5xl h-[85vh] p-4 sm:p-6 rounded-3xl border border-slate-700 shadow-2xl flex flex-col space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-shrink-0">
-                <div class="flex items-center gap-2 truncate pr-2">
-                    <span id="previewTypeIcon" class="text-brand-400 text-base"></span>
-                    <h3 id="previewTitle" class="text-sm sm:text-base font-bold text-white truncate max-w-md">معاينة الملف</h3>
-                </div>
-                <button id="closePreviewBtn" class="text-slate-400 hover:text-white p-1 rounded-xl">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Scrollable Preview Area -->
-            <div id="previewBody" class="flex-1 flex items-center justify-center overflow-auto min-h-[300px] bg-slate-950/80 rounded-2xl border border-slate-800/80 p-2">
-                <!-- Preview content rendered dynamically -->
-            </div>
-
-            <div class="flex justify-between items-center border-t border-slate-800/80 pt-3 flex-shrink-0">
-                <div id="previewMetaInfo" class="text-xs text-slate-400"></div>
-                <a id="downloadPreviewBtn" download class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs flex items-center gap-2 transition-all shadow-md">
-                    <i class="fa-solid fa-download"></i>
-                    <span>تنزيل الملف</span>
-                </a>
-            </div>
+        <div id="previewBody" class="flex-grow p-4 flex items-center justify-center overflow-auto">
+            <!-- Dynamic Content Preview (Image, PDF, Audio, Video, Text) -->
         </div>
     </div>
 
-    <!-- Custom Confirm Dialog Modal -->
-    <div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl text-center space-y-4">
-            <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl mx-auto shadow-inner">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 id="confirmModalTitle" class="text-base font-bold text-white">تأكيد الإجراء</h3>
-            <p id="confirmModalMessage" class="text-xs text-slate-300">هل أنت تأكد من رغبتك في متابعة هذا الإجراء؟</p>
-            <div class="flex gap-2 pt-2">
-                <button id="confirmYesBtn" class="flex-1 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition-all">تأكيد الحذف</button>
-                <button id="confirmNoBtn" class="flex-1 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Toast Container -->
-    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Modal 4: Custom Toast Notification System -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800/60 py-4 px-4 text-center text-xs text-slate-500">
-        <p>منصة سحابة المشاركة المباشرة v4.0 | نقل الأجهزة عبر WebRTC P2P فائقة السرعة</p>
+    <footer class="glass-card border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-500 mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>منصة مشاركة الملفات والكتب السحابية المباشرة &copy; 2026</p>
+            <div class="flex items-center space-x-4 space-x-reverse text-slate-400">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-400"></i> نقل P2P مباشر</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-lock text-emerald-400"></i> بدون تخزين سحابي وسيط</span>
+            </div>
+        </div>
     </footer>
 
-    <!-- Application JavaScript Engine -->
     <script>
-        let filesData = [];
-        let currentCategory = 'all';
-        let viewMode = 'grid';
-        let sortBy = 'newest';
-        
-        let peer = null;
-        let connections = []; // Array of active P2P DataConnections
-        let isHost = false;
-        let broadcastChannel = null;
-        let isFallbackMode = false;
-
-        function getInitialRoomCode() {
-            const hash = window.location.hash.replace('#', '').trim();
-            if (/^\d{4}$/.test(hash)) return hash;
-            const saved = localStorage.getItem('cloud_vault_room_code');
-            if (saved && /^\d{4}$/.test(saved)) return saved;
-            return generate4DigitCode();
-        }
-
-        function generate4DigitCode() {
-            return Math.floor(1000 + Math.random() * 9000).toString();
-        }
-
-        let currentRoomCode = getInitialRoomCode();
-
-        function updateRoomUI() {
-            document.getElementById('roomCodeDisplay').innerText = currentRoomCode;
-            document.getElementById('shareModalRoomCode').innerText = currentRoomCode;
-            window.location.hash = currentRoomCode;
-            localStorage.setItem('cloud_vault_room_code', currentRoomCode);
-        }
-
-        /* Catch environment security errors for WebSockets in restricted iframes */
-        window.addEventListener('error', (e) => {
-            if (e.message && (e.message.includes('SecurityError') || e.message.includes('WebSocket'))) {
-                e.preventDefault();
-                enableFallbackMode(currentRoomCode);
+        // Global error boundary for iframe sandbox security rejections
+        window.addEventListener('unhandledrejection', function(event) {
+            if (event.reason && (event.reason.name === 'SecurityError' || String(event.reason).includes('WebSocket') || String(event.reason).includes('Canvas'))) {
+                event.preventDefault(); // Prevent error from breaking UI or console
+                console.warn('WebSocket connection restricted by Canvas sandbox. Switched to local BroadcastChannel transport.');
+                isWebSocketBlocked = true;
+                updateStatus('وضع الاتصال المحلي (BroadcastChannel)', 'amber');
             }
         });
-        }
 
-        async function saveFileToIDB(fileObj) {
-            try {
-                const idb = await openIDB();
-                const tx = idb.transaction('files', 'readwrite');
-                tx.objectStore('files').put(fileObj);
-            } catch(e) {
-                console.warn("IndexedDB Save Warning:", e);
-            }
-        }
+        // App State
+        let currentRoomPin = '0000';
+        let peer = null;
+        let broadcastChannel = null;
+        let activeConnections = new Map(); // peerId -> DataConnection
+        let filesList = []; // File metadata objects
+        let fileBlobs = new Map(); // id -> Blob
+        let currentFilter = 'all';
+        let db = null;
+        let isWebSocketBlocked = false;
+        const myInstanceId = Math.random().toString(36).substring(2, 9);
+        let activeLocalPeers = new Set();
 
-        async function getFileFromIDB(id) {
-            try {
-                const idb = await openIDB();
-                return new Promise((resolve) => {
-                    const tx = idb.transaction('files', 'readonly');
-                    const req = tx.objectStore('files').get(id);
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => resolve(null);
-                });
-            } catch(e) {
-                return null;
-            }
-        }
-
-        async function getAllFilesFromIDB() {
-            try {
-                const idb = await openIDB();
-                return new Promise((resolve) => {
-                    const tx = idb.transaction('files', 'readonly');
-                    const req = tx.objectStore('files').getAll();
-                    req.onsuccess = () => resolve(req.result || []);
-                    req.onerror = () => resolve([]);
-                });
-            } catch(e) {
-                return [];
-            }
-        }
-
-        async function deleteFileFromIDB(id) {
-            try {
-                const idb = await openIDB();
-                const tx = idb.transaction('files', 'readwrite');
-                tx.objectStore('files').delete(id);
-            } catch(e) {
-                console.warn("IndexedDB Delete Warning:", e);
-            }
-        }
-
-        async function clearIDB() {
-            try {
-                const idb = await openIDB();
-                const tx = idb.transaction('files', 'readwrite');
-                tx.objectStore('files').clear();
-            } catch(e){}
-        }
-
-        /* Image Compression Helper */
-        async function compressImageIfNeeded(dataUrl, maxDimension = 1200, quality = 0.75) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = dataUrl;
-                img.onload = () => {
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width <= maxDimension && height <= maxDimension && dataUrl.length < 500000) {
-                        return resolve(dataUrl);
+        // Initialize IndexedDB for local persistent caching
+        async function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('CloudVaultDB', 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('files')) {
+                        db.createObjectStore('files', { keyPath: 'id' });
                     }
-
-                    if (width > height) {
-                        if (width > maxDimension) {
-                            height = Math.round((height * maxDimension) / width);
-                            width = maxDimension;
-                        }
-                    } else {
-                        if (height > maxDimension) {
-                            width = Math.round((width * maxDimension) / height);
-                            height = maxDimension;
-                        }
-                    }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const compressed = canvas.toDataURL('image/jpeg', quality);
-                    resolve(compressed);
                 };
-                img.onerror = () => resolve(dataUrl);
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    loadFilesFromDB();
+                    resolve(db);
+                };
+                request.onerror = (e) => reject(e);
             });
         }
 
-        function updateConnectionUI(status, count = 1) {
-            const badge = document.getElementById('connectionStatusBadge');
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('connectedCountText');
-
-            if (status === 'connected') {
-                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
-                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
-                text.innerText = `${count} ${count === 1 ? 'جهاز متصل' : 'أجهزة متصلة'}`;
-            } else if (status === 'local_fallback') {
-                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30";
-                dot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse";
-                text.innerText = "اتصال محلي (BroadcastChannel)";
-            } else if (status === 'connecting') {
-                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30";
-                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping";
-                text.innerText = "جاري الاتصال...";
-            } else {
-                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30";
-                dot.className = "w-2.5 h-2.5 rounded-full bg-rose-400";
-                text.innerText = "غير متصل (اضغط للتجديد)";
-            }
+        // Save received file blob to IndexedDB
+        function saveFileToDB(fileMeta, blob) {
+            if (!db) return;
+            const transaction = db.transaction(['files'], 'readwrite');
+            const store = transaction.objectStore('files');
+            store.put({ id: fileMeta.id, meta: fileMeta, blob: blob });
         }
 
-        function initBroadcastChannel(roomCode) {
+        // Load cached files from IndexedDB
+        function loadFilesFromDB() {
+            if (!db) return;
+            const transaction = db.transaction(['files'], 'readonly');
+            const store = transaction.objectStore('files');
+            const request = store.getAll();
+            request.onsuccess = () => {
+                const results = request.result || [];
+                results.forEach(item => {
+                    if (!filesList.some(f => f.id === item.id)) {
+                        filesList.push(item.meta);
+                        fileBlobs.set(item.id, item.blob);
+                    }
+                });
+                renderFiles();
+            };
+        }
+
+        // Generate 4-digit PIN code
+        function generate4DigitPin() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        // Format PeerJS Room Host ID namespace
+        function getHostPeerId(pin) {
+            return `cloud-vault-room-${pin}-host`;
+        }
+
+        // Format PeerJS Room Guest ID namespace
+        function getGuestPeerId(pin) {
+            const randomSuffix = Math.random().toString(36).substring(2, 7);
+            return `cloud-vault-room-${pin}-guest-${randomSuffix}`;
+        }
+
+        function initBroadcastChannel(pin) {
             if (broadcastChannel) {
                 try { broadcastChannel.close(); } catch(e){}
             }
-            if ('BroadcastChannel' in window) {
-                broadcastChannel = new BroadcastChannel(`cloud_vault_room_${roomCode}`);
+            try {
+                broadcastChannel = new BroadcastChannel('cloud_vault_room_' + pin);
                 broadcastChannel.onmessage = (event) => {
-                    handleIncomingMessage(event.data, null);
+                    const data = event.data;
+                    if (data && data.senderId !== myInstanceId) {
+                        if (data.type === 'PRESENCE_PING') {
+                            activeLocalPeers.add(data.senderId);
+                            updatePeerCount();
+                            try {
+                                broadcastChannel.postMessage({ senderId: myInstanceId, type: 'PRESENCE_PONG' });
+                            } catch(e){}
+                            return;
+                        }
+                        if (data.type === 'PRESENCE_PONG') {
+                            activeLocalPeers.add(data.senderId);
+                            updatePeerCount();
+                            return;
+                        }
+                        handleIncomingData(data, null);
+                    }
                 };
+                activeLocalPeers.clear();
+                broadcastChannel.postMessage({ senderId: myInstanceId, type: 'PRESENCE_PING' });
+            } catch (e) {
+                console.warn('BroadcastChannel fallback notice:', e);
             }
         }
 
-        function initPeerConnection(roomCode) {
-            currentRoomCode = roomCode;
-            updateRoomUI();
-            updateConnectionUI('connecting');
-            initBroadcastChannel(roomCode);
-
-            // Clean previous connections
+        // Initialize P2P Peer Network with SecurityError catchers
+        function initPeer(customPin = null) {
             if (peer) {
                 try { peer.destroy(); } catch(e){}
             }
-            connections = [];
-            isFallbackMode = false;
 
-            // Attempt to register as Host for this room
-            const hostPeerId = `cvault4_room_${roomCode}_host`;
-            
+            const pin = customPin || generate4DigitPin();
+            currentRoomPin = pin;
+            updateRoomPinUI(pin);
+
+            initBroadcastChannel(pin);
+
+            const isHost = !customPin;
+            const peerId = isHost ? getHostPeerId(pin) : getGuestPeerId(pin);
+
+            updateStatus('جاري الاتصال بالنظام...', 'amber');
+
             try {
-                peer = new Peer(hostPeerId, { 
+                peer = new Peer(peerId, {
                     debug: 0,
                     config: {
                         iceServers: [
@@ -587,685 +547,655 @@
                 });
 
                 peer.on('open', (id) => {
-                    isHost = true;
-                    updateConnectionUI('connected', 1);
-                    showToast(`تم إنشاء الغرفة المباشرة (${roomCode}) كجهاز رئيسي`);
-                    loadLocalFilesAndRender();
+                    updateStatus('متصل بالشبكة (جاهز)', 'emerald');
+                    showToast('تم الاتصال بنجاح. الغرفة جاهزة للربط', 'success');
+
+                    if (!isHost) {
+                        connectToHost(pin);
+                    }
                 });
 
                 peer.on('connection', (conn) => {
-                    // Incoming client connection to Host
-                    connections.push(conn);
-                    setupConnectionListeners(conn);
-
-                    conn.on('open', () => {
-                        updateConnectionUI('connected', connections.length + 1);
-                        showToast("انضم جهاز جديد للغرفة المباشرة!");
-                        
-                        // Host sends entire file list to new client
-                        conn.send({
-                            type: 'SYNC_FILES',
-                            files: filesData
-                        });
-
-                        // Broadcast count to all clients
-                        broadcastToPeers({
-                            type: 'MEMBER_COUNT',
-                            count: connections.length + 1
-                        });
-                    });
+                    setupConnectionHandlers(conn);
                 });
 
                 peer.on('error', (err) => {
+                    console.warn('Peer network note:', err);
                     if (err.type === 'unavailable-id') {
-                        // Host ID taken! Connect as Client
-                        isHost = false;
-                        connectAsClient(roomCode);
+                        if (!customPin) {
+                            initPeer();
+                        } else {
+                            showToast('عفواً، كود الغرفة غير متوفر أو مشغول الآن', 'error');
+                            updateStatus('خطأ في كود الغرفة', 'rose');
+                        }
+                    } else if (err.type === 'peer-not-found') {
+                        showToast('لم يتم العثور على جهاز بـ كود الغرفة المكتوب!', 'error');
+                        updateStatus('الغرفة غير موجودة', 'rose');
                     } else {
-                        console.warn("PeerJS connection note:", err);
-                        enableFallbackMode(roomCode);
+                        updateStatus('وضع الاتصال المحلي (BroadcastChannel)', 'amber');
                     }
                 });
-            } catch (err) {
-                console.warn("WebSocket blocked by environment:", err);
-                enableFallbackMode(roomCode);
-            }
-        }
 
-        function enableFallbackMode(roomCode) {
-            if (isFallbackMode) return;
-            isFallbackMode = true;
-            updateConnectionUI('local_fallback');
-            showToast("تم التحويل الذكي لنظام المزامنة المحلية (BroadcastChannel)");
-            loadLocalFilesAndRender();
-        }
-
-        function connectAsClient(roomCode) {
-            try {
-                const clientPeerId = `cvault4_room_${roomCode}_client_${Math.floor(Math.random()*10000)}`;
-                peer = new Peer(clientPeerId, { debug: 0 });
-
-                peer.on('open', () => {
-                    const hostPeerId = `cvault4_room_${roomCode}_host`;
-                    const conn = peer.connect(hostPeerId);
-
-                    connections = [conn];
-                    setupConnectionListeners(conn);
-
-                    conn.on('open', () => {
-                        updateConnectionUI('connected', 2);
-                        showToast(`تم الربط المباشر مع الغرفة (${roomCode})`);
-                        // Request files sync from Host
-                        conn.send({ type: 'REQUEST_SYNC' });
-                    });
+                peer.on('disconnected', () => {
+                    updateStatus('انقطع الاتصال المؤقت...', 'amber');
                 });
-
-                peer.on('error', (err) => {
-                    console.warn("Client Connection error:", err);
-                    enableFallbackMode(roomCode);
-                });
-            } catch(e) {
-                enableFallbackMode(roomCode);
+            } catch (e) {
+                console.warn('WebSocket sandbox restriction detected. Switched to local BroadcastChannel transport.');
+                isWebSocketBlocked = true;
+                updateStatus('وضع الاتصال المحلي (BroadcastChannel)', 'amber');
             }
         }
 
-        function setupConnectionListeners(conn) {
-            conn.on('data', (data) => {
-                handleIncomingMessage(data, conn);
-            });
-
-            conn.on('close', () => {
-                connections = connections.filter(c => c !== conn);
-                updateConnectionUI('connected', connections.length + 1);
-                showToast("غادر أحد الأجهزة المتصلة", "info");
-            });
-
-            conn.on('error', () => {
-                connections = connections.filter(c => c !== conn);
-            });
-        }
-
-        function broadcastToPeers(message, excludeConn = null) {
-            // Direct P2P WebRTC Connections
-            connections.forEach(conn => {
-                if (conn !== excludeConn && conn.open) {
-                    try { conn.send(message); } catch(e){}
-                }
-            });
-
-            // Local Multi-Tab / Iframe BroadcastChannel fallback
-            if (broadcastChannel) {
-                try { broadcastChannel.postMessage(message); } catch(e){}
-            }
-        }
-
-        function initPeerConnection(roomCode) {
-            currentRoomCode = roomCode;
-            updateRoomUI();
-            updateConnectionUI('connecting');
-
-            // Clean previous connections
-            if (peer) {
-                try { peer.destroy(); } catch(e){}
-            }
-            connections = [];
-
-            // Attempt to register as Host for this room
-            const hostPeerId = `cvault4_room_${roomCode}_host`;
+        // Connect guest to host room PIN
+        function connectToHost(pin) {
+            if (!peer || peer.destroyed) return;
+            const hostId = getHostPeerId(pin);
+            updateStatus('جاري الاقتران بالجهاز الرئيسي...', 'amber');
             
-            peer = new Peer(hostPeerId, { debug: 0 });
-
-            peer.on('open', (id) => {
-                isHost = true;
-                updateConnectionUI('connected', 1);
-                showToast(`تم إنشاء الغرفة المباشرة (${roomCode}) كجهاز رئيسي`);
-                loadLocalFilesAndRender();
-            });
-
-            peer.on('connection', (conn) => {
-                // Incoming client connection to Host
-                connections.push(conn);
-                setupConnectionListeners(conn);
-
-                conn.on('open', () => {
-                    updateConnectionUI('connected', connections.length + 1);
-                    showToast("انضم جهاز جديد للغرفة المباشرة!");
-                    
-                    // Host sends entire file list to new client
-                    conn.send({
-                        type: 'SYNC_FILES',
-                        files: filesData
-                    });
-
-                    // Broadcast count to all clients
-                    broadcastToPeers({
-                        type: 'MEMBER_COUNT',
-                        count: connections.length + 1
-                    });
-                });
-            });
-
-            peer.on('error', (err) => {
-                if (err.type === 'unavailable-id') {
-                    // Host ID taken! Connect as Client
-                    isHost = false;
-                    connectAsClient(roomCode);
-                } else {
-                    console.warn("PeerJS note:", err);
-                    updateConnectionUI('disconnected');
-                }
-            });
-        }
-
-        function connectAsClient(roomCode) {
-            const clientPeerId = `cvault4_room_${roomCode}_client_${Math.floor(Math.random()*10000)}`;
-            peer = new Peer(clientPeerId, { debug: 0 });
-
-            peer.on('open', () => {
-                const hostPeerId = `cvault4_room_${roomCode}_host`;
-                const conn = peer.connect(hostPeerId);
-
-                connections = [conn];
-                setupConnectionListeners(conn);
-
-                conn.on('open', () => {
-                    updateConnectionUI('connected', 2);
-                    showToast(`تم الربط المباشر مع الغرفة (${roomCode})`);
-                    // Request files sync from Host
-                    conn.send({ type: 'REQUEST_SYNC' });
-                });
-            });
-
-            peer.on('error', (err) => {
-                console.warn("Client Connection error:", err);
-                updateConnectionUI('disconnected');
-            });
-        }
-
-        function setupConnectionListeners(conn) {
-            conn.on('data', (data) => {
-                handleIncomingMessage(data, conn);
-            });
-
-            conn.on('close', () => {
-                connections = connections.filter(c => c !== conn);
-                updateConnectionUI('connected', connections.length + 1);
-                showToast("غادر أحد الأجهزة المتصلة", "info");
-            });
-
-            conn.on('error', () => {
-                connections = connections.filter(c => c !== conn);
-            });
-        }
-
-        function broadcastToPeers(message, excludeConn = null) {
-            connections.forEach(conn => {
-                if (conn !== excludeConn && conn.open) {
-                    try { conn.send(message); } catch(e){}
-                }
-            });
-        }
-
-        async function handleIncomingMessage(data, senderConn) {
-            if (!data || !data.type) return;
-
-            switch(data.type) {
-                case 'SYNC_FILES':
-                    if (data.files && Array.isArray(data.files)) {
-                        filesData = data.files;
-                        for (const file of filesData) {
-                            await saveFileToIDB(file);
-                        }
-                        renderFiles();
-                    }
-                    break;
-
-                case 'REQUEST_SYNC':
-                    if (isHost) {
-                        senderConn.send({ type: 'SYNC_FILES', files: filesData });
-                    }
-                    break;
-
-                case 'NEW_FILE':
-                    if (data.file) {
-                        filesData.unshift(data.file);
-                        await saveFileToIDB(data.file);
-                        renderFiles();
-                        showToast(`تم استلام ملف جديد: (${data.file.name})`);
-
-                        // If host, rebroadcast to all other connected clients
-                        if (isHost) {
-                            broadcastToPeers(data, senderConn);
-                        }
-                    }
-                    break;
-
-                case 'DELETE_FILE':
-                    if (data.id) {
-                        filesData = filesData.filter(f => f.id !== data.id);
-                        await deleteFileFromIDB(data.id);
-                        renderFiles();
-                        showToast("تم حذف ملف من الغرفة");
-
-                        if (isHost) {
-                            broadcastToPeers(data, senderConn);
-                        }
-                    }
-                    break;
-
-                case 'CLEAR_ROOM':
-                    filesData = [];
-                    await clearIDB();
-                    renderFiles();
-                    showToast("تم إفراغ محتويات الغرفة");
-
-                    if (isHost) {
-                        broadcastToPeers(data, senderConn);
-                    }
-                    break;
-
-                case 'MEMBER_COUNT':
-                    if (data.count) {
-                        updateConnectionUI('connected', data.count);
-                    }
-                    break;
+            try {
+                const conn = peer.connect(hostId, { reliable: true });
+                setupConnectionHandlers(conn);
+            } catch(e) {
+                console.warn('Direct peer connection fallback:', e);
             }
         }
 
-        async function loadLocalFilesAndRender() {
-            filesData = await getAllFilesFromIDB();
+        // Configure connection event handlers
+        function setupConnectionHandlers(conn) {
+            conn.on('open', () => {
+                activeConnections.set(conn.peer, conn);
+                updatePeerCount();
+                updateStatus('متصل بالشركاء (P2P)', 'emerald');
+                showToast('تم الاتصال بنجاح بجهاز جديد! 🚀', 'info');
+
+                conn.send({
+                    type: 'SYNC_FILES',
+                    files: filesList
+                });
+            });
+
+            conn.on('data', (data) => {
+                handleIncomingData(data, conn);
+            });
+
+            conn.on('close', () => {
+                activeConnections.delete(conn.peer);
+                updatePeerCount();
+                showToast('غادر أحد الأجهزة المتصلة', 'info');
+                if (activeConnections.size === 0) {
+                    updateStatus('متصل بالشبكة (بانتظار أجهزة)', 'emerald');
+                }
+            });
+
+            conn.on('error', (err) => {
+                console.error('Connection error:', err);
+                activeConnections.delete(conn.peer);
+                updatePeerCount();
+            });
+        }
+
+        let incomingTransfers = new Map(); // fileId -> { chunks: [], receivedSize: 0 }
+
+        function handleIncomingData(data, conn) {
+            if (data.type === 'SYNC_FILES') {
+                data.files.forEach(remoteFile => {
+                    if (!filesList.some(f => f.id === remoteFile.id)) {
+                        filesList.push(remoteFile);
+                    }
+                });
+                renderFiles();
+            }
+            else if (data.type === 'FILE_HEADER') {
+                incomingTransfers.set(data.fileMeta.id, {
+                    meta: data.fileMeta,
+                    chunks: [],
+                    receivedSize: 0
+                });
+                showUploadProgress(data.fileMeta.name, 0);
+            }
+            else if (data.type === 'FILE_CHUNK') {
+                const transfer = incomingTransfers.get(data.fileId);
+                if (transfer) {
+                    transfer.chunks.push(data.chunk);
+                    transfer.receivedSize += data.chunk.byteLength;
+                    
+                    const progress = Math.min(100, Math.round((transfer.receivedSize / transfer.meta.size) * 100));
+                    showUploadProgress(transfer.meta.name, progress);
+
+                    if (transfer.receivedSize >= transfer.meta.size) {
+                        const completeBlob = new Blob(transfer.chunks, { type: transfer.meta.type });
+                        fileBlobs.set(transfer.meta.id, completeBlob);
+                        
+                        if (!filesList.some(f => f.id === transfer.meta.id)) {
+                            filesList.push(transfer.meta);
+                        }
+                        
+                        saveFileToDB(transfer.meta, completeBlob);
+                        incomingTransfers.delete(data.fileId);
+                        hideUploadProgress();
+                        renderFiles();
+                        showToast(`تم استلام الملف: ${transfer.meta.name} 🎉`, 'success');
+                    }
+                }
+            }
+            else if (data.type === 'REQUEST_FILE') {
+                const blob = fileBlobs.get(data.fileId);
+                const fileMeta = filesList.find(f => f.id === data.fileId);
+                if (blob && fileMeta) {
+                    sendFileToPeer(fileMeta, blob, conn);
+                }
+            }
+        }
+
+        function broadcastFile(fileMeta, blob) {
+            if (activeConnections.size === 0 && !broadcastChannel) {
+                showToast('الملف تم حفظه محلياً. سيتزامن فور اتصال أي جهاز بنفس الكود', 'info');
+                return;
+            }
+
+            activeConnections.forEach((conn) => {
+                sendFileToPeer(fileMeta, blob, conn);
+            });
+
+            if (broadcastChannel) {
+                sendChunkedFileOverBroadcastChannel(fileMeta, blob);
+            }
+        }
+
+        function sendChunkedFileOverBroadcastChannel(fileMeta, blob) {
+            const chunkSize = 32 * 1024;
+            const reader = new FileReader();
+            let offset = 0;
+
+            if (broadcastChannel) {
+                try {
+                    broadcastChannel.postMessage({
+                        senderId: myInstanceId,
+                        type: 'FILE_HEADER',
+                        fileMeta: fileMeta
+                    });
+                } catch(e){}
+            }
+
+            reader.onload = (e) => {
+                if (broadcastChannel) {
+                    try {
+                        broadcastChannel.postMessage({
+                            senderId: myInstanceId,
+                            type: 'FILE_CHUNK',
+                            fileId: fileMeta.id,
+                            chunk: e.target.result
+                        });
+                    } catch(e){}
+                }
+
+                offset += e.target.result.byteLength;
+                const progress = Math.min(100, Math.round((offset / fileMeta.size) * 100));
+                showUploadProgress(`إرسال ${fileMeta.name}`, progress);
+
+                if (offset < blob.size) {
+                    readNextChunk();
+                } else {
+                    hideUploadProgress();
+                    showToast(`تم إرسال ${fileMeta.name} بنجاح!`, 'success');
+                }
+            };
+
+            function readNextChunk() {
+                const slice = blob.slice(offset, offset + chunkSize);
+                reader.readAsArrayBuffer(slice);
+            }
+
+            readNextChunk();
+        }
+
+        function sendFileToPeer(fileMeta, blob, conn) {
+            if (!conn) return;
+            const chunkSize = 32 * 1024;
+            const reader = new FileReader();
+            let offset = 0;
+
+            try {
+                conn.send({
+                    type: 'FILE_HEADER',
+                    fileMeta: fileMeta
+                });
+            } catch(e) { return; }
+
+            reader.onload = (e) => {
+                try {
+                    conn.send({
+                        type: 'FILE_CHUNK',
+                        fileId: fileMeta.id,
+                        chunk: e.target.result
+                    });
+                } catch(e) { return; }
+
+                offset += e.target.result.byteLength;
+                const progress = Math.min(100, Math.round((offset / fileMeta.size) * 100));
+                showUploadProgress(`إرسال ${fileMeta.name}`, progress);
+
+                if (offset < blob.size) {
+                    readNextChunk();
+                } else {
+                    hideUploadProgress();
+                    showToast(`تم إرسال ${fileMeta.name} بنجاح!`, 'success');
+                }
+            };
+
+            function readNextChunk() {
+                const slice = blob.slice(offset, offset + chunkSize);
+                reader.readAsArrayBuffer(slice);
+            }
+
+            readNextChunk();
+        }
+
+
+        // Categorize file by MIME / Extension
+        function getCategory(file) {
+            const type = file.type || '';
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            if (type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) {
+                return 'images';
+            }
+            if (['pdf', 'epub', 'doc', 'docx', 'txt', 'rtf'].includes(ext) || type.includes('pdf') || type.includes('text')) {
+                return 'books';
+            }
+            if (type.startsWith('audio/') || type.startsWith('video/') || ['mp3', 'wav', 'mp4', 'mkv', 'avi', 'mov'].includes(ext)) {
+                return 'media';
+            }
+            return 'others';
+        }
+
+        // Handle selected file upload
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                processFiles(files);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('dropZone').classList.add('border-brand-500', 'bg-brand-500/10');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-500/10');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-500/10');
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                processFiles(files);
+            }
+        }
+
+        function processFiles(files) {
+            Array.from(files).forEach(file => {
+                const fileMeta = {
+                    id: 'file-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+                    name: file.name,
+                    size: file.size,
+                    type: file.type || 'application/octet-stream',
+                    category: getCategory(file),
+                    timestamp: new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' })
+                };
+
+                fileBlobs.set(fileMeta.id, file);
+                filesList.unshift(fileMeta);
+                saveFileToDB(fileMeta, file);
+                
+                // Broadcast file to connected devices
+                broadcastFile(fileMeta, file);
+            });
+
             renderFiles();
         }
 
-        function getCategoryFromFile(file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-            const mime = file.type.toLowerCase();
 
-            if (['pdf', 'epub', 'mobi', 'doc', 'docx', 'txt', 'rtf', 'md', 'json'].includes(ext) || mime.includes('pdf') || mime.includes('document') || mime.includes('text')) {
-                return 'books';
-            }
-            if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext) || mime.includes('image')) {
-                return 'images';
-            }
-            if (['mp3', 'wav', 'ogg', 'mp4', 'mkv', 'avi', 'mov', 'webm', 'm4a'].includes(ext) || mime.includes('audio') || mime.includes('video')) {
-                return 'media';
-            }
-            return 'other';
-        }
-
-        function formatBytes(bytes) {
-            if (!bytes || bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function getFileIconClass(category, ext) {
-            if (category === 'books') {
-                if (ext === 'pdf') return { icon: 'fa-file-pdf', color: 'text-rose-400 bg-rose-500/10' };
-                return { icon: 'fa-book-open', color: 'text-amber-400 bg-amber-500/10' };
-            }
-            if (category === 'images') return { icon: 'fa-file-image', color: 'text-emerald-400 bg-emerald-500/10' };
-            if (category === 'media') return { icon: 'fa-file-audio', color: 'text-purple-400 bg-purple-500/10' };
-            return { icon: 'fa-file-zipper', color: 'text-brand-400 bg-brand-500/10' };
-        }
-
-        function sortFilesArray(files) {
-            return files.sort((a, b) => {
-                if (sortBy === 'newest') return (b.timestamp || 0) - (a.timestamp || 0);
-                if (sortBy === 'oldest') return (a.timestamp || 0) - (b.timestamp || 0);
-                if (sortBy === 'name') return a.name.localeCompare(b.name, 'ar');
-                if (sortBy === 'size') return (b.size || 0) - (a.size || 0);
-                return 0;
+        function setFilter(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.className = 'filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-brand-600 text-white shadow-md shadow-brand-600/30';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800';
+                }
             });
+            renderFiles();
+        }
+
+        function formatBytes(bytes, decimals = 1) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        function getFileIcon(category, type) {
+            if (category === 'images') return { icon: 'fa-file-image', color: 'text-cyan-400', bg: 'bg-cyan-500/20' };
+            if (category === 'books') return { icon: 'fa-book-open', color: 'text-emerald-400', bg: 'bg-emerald-500/20' };
+            if (category === 'media') return { icon: 'fa-file-audio', color: 'text-rose-400', bg: 'bg-rose-500/20' };
+            return { icon: 'fa-file-zipper', color: 'text-amber-400', bg: 'bg-amber-500/20' };
         }
 
         function renderFiles() {
-            const container = document.getElementById('filesContainer');
+            const grid = document.getElementById('filesGrid');
             const emptyState = document.getElementById('emptyState');
-            const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
 
-            let filtered = filesData.filter(file => {
-                const matchesCategory = currentCategory === 'all' || file.category === currentCategory;
-                const matchesSearch = !searchQuery || file.name.toLowerCase().includes(searchQuery);
+            // Counts
+            document.getElementById('countAll').innerText = filesList.length;
+            document.getElementById('countBooks').innerText = filesList.filter(f => f.category === 'books').length;
+            document.getElementById('countImages').innerText = filesList.filter(f => f.category === 'images').length;
+            document.getElementById('countMedia').innerText = filesList.filter(f => f.category === 'media').length;
+            document.getElementById('countOthers').innerText = filesList.filter(f => f.category === 'others').length;
+
+            const filtered = filesList.filter(f => {
+                const matchesCategory = currentFilter === 'all' || f.category === currentFilter;
+                const matchesSearch = f.name.toLowerCase().includes(searchVal);
                 return matchesCategory && matchesSearch;
             });
 
-            filtered = sortFilesArray(filtered);
-
             if (filtered.length === 0) {
-                container.innerHTML = '';
+                grid.innerHTML = '';
                 emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
                 return;
             }
 
             emptyState.classList.add('hidden');
-            emptyState.classList.remove('flex');
+            grid.innerHTML = filtered.map(file => {
+                const iconInfo = getFileIcon(file.category, file.type);
+                const hasBlob = fileBlobs.has(file.id);
 
-            if (viewMode === 'grid') {
-                container.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
-                container.innerHTML = filtered.map(file => {
-                    const iconStyle = getFileIconClass(file.category, file.ext);
-                    const isImage = file.category === 'images' && file.dataUrl;
-
-                    return `
-                        <div class="glass-card rounded-3xl p-4 flex flex-col justify-between space-y-3 group relative overflow-hidden">
-                            <div class="space-y-3">
-                                ${isImage ? `
-                                    <div class="h-36 w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 relative">
-                                        <img src="${file.dataUrl}" alt="${file.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                    </div>
-                                ` : `
-                                    <div class="h-28 w-full rounded-2xl ${iconStyle.color} flex items-center justify-center text-3xl shadow-inner">
-                                        <i class="fa-solid ${iconStyle.icon}"></i>
-                                    </div>
-                                `}
-
-                                <div>
-                                    <div class="flex items-center justify-between gap-1">
-                                        <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate flex-1" title="${file.name}">${file.name}</h4>
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                                            مباشر
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
-                                        <span>${formatBytes(file.size)}</span>
-                                        <span>•</span>
-                                        <span>${file.date || 'الآن'}</span>
-                                    </div>
-                                </div>
+                return `
+                <div class="glass-card glass-card-hover rounded-2xl p-4 flex flex-col justify-between border border-slate-800 relative group">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl ${iconInfo.bg} ${iconInfo.color} flex items-center justify-center text-lg">
+                                <i class="fa-solid ${iconInfo.icon}"></i>
                             </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${hasBlob ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/40' : 'bg-amber-950/80 text-amber-400 border border-amber-800/40'}">
+                                ${hasBlob ? 'محفوظ محلياً' : 'متوفر للتحميل'}
+                            </span>
+                        </div>
 
-                            <div class="flex items-center justify-between border-t border-slate-800/80 pt-2.5">
-                                <button onclick="window.previewFile('${file.id}')" class="text-xs text-brand-400 hover:text-brand-300 font-bold flex items-center gap-1">
-                                    <i class="fa-solid fa-eye"></i>
-                                    <span>معاينة</span>
-                                </button>
-                                <div class="flex items-center gap-1">
-                                    <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white transition-colors" title="تحميل">
-                                        <i class="fa-solid fa-download text-xs"></i>
-                                    </button>
-                                    <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors" title="حذف">
-                                        <i class="fa-solid fa-trash-can text-xs"></i>
-                                    </button>
-                                </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-100 truncate" title="${file.name}">${file.name}</h4>
+                            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
+                                <span>${formatBytes(file.size)}</span>
+                                <span>${file.timestamp}</span>
                             </div>
                         </div>
-                    `;
-                }).join('');
-            } else {
-                container.className = 'flex flex-col gap-2.5';
-                container.innerHTML = filtered.map(file => {
-                    const iconStyle = getFileIconClass(file.category, file.ext);
+                    </div>
 
-                    return `
-                        <div class="glass-card rounded-2xl p-3.5 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3 truncate">
-                                <div class="w-10 h-10 rounded-xl ${iconStyle.color} flex items-center justify-center text-lg flex-shrink-0">
-                                    <i class="fa-solid ${iconStyle.icon}"></i>
-                                </div>
-                                <div class="truncate">
-                                    <div class="flex items-center gap-2">
-                                        <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate">${file.name}</h4>
-                                        <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
-                                            مباشر
-                                        </span>
-                                    </div>
-                                    <p class="text-[11px] text-slate-400">${formatBytes(file.size)} • ${file.date || 'الآن'}</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                                <button onclick="window.previewFile('${file.id}')" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-400 text-xs font-bold transition-all">
-                                    معاينة
-                                </button>
-                                <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-xl hover:bg-slate-800 text-slate-300 transition-colors" title="تحميل">
-                                    <i class="fa-solid fa-download text-xs"></i>
-                                </button>
-                                <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors" title="حذف">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
+                    <div class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                        ${hasBlob ? `
+                            <button onclick="previewFile('${file.id}')" class="flex-1 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors">
+                                <i class="fa-solid fa-eye ml-1"></i> معاينة
+                            </button>
+                            <button onclick="downloadFile('${file.id}')" class="py-1.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white transition-colors" title="تحميل">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        ` : `
+                            <button onclick="requestFileFromPeers('${file.id}')" class="w-full py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-colors">
+                                <i class="fa-solid fa-cloud-arrow-down ml-1"></i> سحب الملف الآن
+                            </button>
+                        `}
+                        <button onclick="deleteFile('${file.id}')" class="py-1.5 px-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-950/30 transition-colors" title="حذف">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
         }
 
-        async function handleFilesUpload(filesList) {
-            if (!filesList || filesList.length === 0) return;
 
-            const progressContainer = document.getElementById('uploadProgressContainer');
-            const fileNameEl = document.getElementById('uploadFileName');
-            const fileSizeEl = document.getElementById('uploadFileSize');
-            const progressBar = document.getElementById('progressBar');
-            const statusText = document.getElementById('uploadStatusText');
+        // Request a missing blob from connected peers
+        function requestFileFromPeers(fileId) {
+            if (activeConnections.size === 0) {
+                showToast('لا يوجد أجهزة متصلة حالياً لسحب الملف منها!', 'error');
+                return;
+            }
 
-            progressContainer.classList.remove('hidden');
-
-            for (let i = 0; i < filesList.length; i++) {
-                const file = filesList[i];
-                fileNameEl.innerText = file.name;
-                fileSizeEl.innerText = formatBytes(file.size);
-                progressBar.style.width = '25%';
-
-                const category = getCategoryFromFile(file);
-                const reader = new FileReader();
-
-                await new Promise((resolve) => {
-                    reader.onload = async (e) => {
-                        progressBar.style.width = '60%';
-                        let dataUrl = e.target.result;
-
-                        if (category === 'images') {
-                            dataUrl = await compressImageIfNeeded(dataUrl);
-                        }
-
-                        const timestamp = Date.now();
-                        const newFileObj = {
-                            id: 'f_' + timestamp + '_' + Math.random().toString(36).substr(2, 5),
-                            name: file.name,
-                            size: file.size,
-                            category: category,
-                            ext: file.name.split('.').pop().toLowerCase(),
-                            type: file.type,
-                            timestamp: timestamp,
-                            date: new Date().toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                            dataUrl: dataUrl
-                        };
-
-                        // Store locally in IndexedDB
-                        await saveFileToIDB(newFileObj);
-                        filesData.unshift(newFileObj);
-                        renderFiles();
-
-                        // Broadcast file object to all connected devices via WebRTC
-                        broadcastToPeers({
-                            type: 'NEW_FILE',
-                            file: newFileObj
-                        });
-
-                        progressBar.style.width = '100%';
-                        statusText.innerText = 'تم رفع ونقل الملف بنجاح!';
-                        showToast(`تم مشاركة (${file.name}) بنجاح`);
-                        setTimeout(resolve, 200);
-                    };
-
-                    reader.readAsDataURL(file);
+            showToast('جاري طلب الملف من الأجهزة المتصلة...', 'info');
+            activeConnections.forEach(conn => {
+                conn.send({
+                    type: 'REQUEST_FILE',
+                    fileId: fileId
                 });
-            }
-
-            setTimeout(() => {
-                progressContainer.classList.add('hidden');
-                document.getElementById('uploadModal').classList.add('hidden');
-                progressBar.style.width = '0%';
-            }, 400);
+            });
         }
 
-        /* Enhanced Preview Overlay Handler */
-        window.previewFile = async function(id) {
-            let file = filesData.find(f => f.id === id);
-            if (!file || !file.dataUrl) {
-                file = await getFileFromIDB(id);
-            }
+        // Preview file content in modal
+        function previewFile(fileId) {
+            const blob = fileBlobs.get(fileId);
+            const fileMeta = filesList.find(f => f.id === fileId);
 
-            if (!file) {
-                showToast("تعذر جلب بيانات هذا الملف", "error");
+            if (!blob || !fileMeta) {
+                showToast('الملف غير متاح للمعاينة!', 'error');
                 return;
             }
 
             const modal = document.getElementById('previewModal');
             const title = document.getElementById('previewTitle');
             const body = document.getElementById('previewBody');
-            const downloadBtn = document.getElementById('downloadPreviewBtn');
-            const iconEl = document.getElementById('previewTypeIcon');
-            const metaInfo = document.getElementById('previewMetaInfo');
+            const downloadBtn = document.getElementById('previewDownloadBtn');
 
-            title.innerText = file.name;
-            downloadBtn.onclick = () => window.downloadFile(id);
-            metaInfo.innerText = `${formatBytes(file.size)} • ${file.ext.toUpperCase()} • ${file.date || ''}`;
-
-            const iconStyle = getFileIconClass(file.category, file.ext);
-            iconEl.className = `fa-solid ${iconStyle.icon} text-brand-400`;
-
+            title.innerText = fileMeta.name;
+            downloadBtn.onclick = () => downloadFile(fileId);
             body.innerHTML = '';
 
-            // Image Preview
-            if (file.category === 'images' && file.dataUrl) {
+            const fileUrl = URL.createObjectURL(blob);
+
+            if (fileMeta.category === 'images') {
+                body.innerHTML = `<img src="${fileUrl}" class="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl">`;
+            } else if (fileMeta.type.includes('pdf')) {
+                body.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[80vh] rounded-2xl border-0"></iframe>`;
+            } else if (fileMeta.type.startsWith('audio/')) {
                 body.innerHTML = `
-                    <div class="w-full h-full flex items-center justify-center p-2">
-                        <img src="${file.dataUrl}" alt="${file.name}" class="max-h-full max-w-full rounded-2xl object-contain shadow-2xl">
-                    </div>
-                `;
-            } 
-            // PDF Preview
-            else if (file.ext === 'pdf' && file.dataUrl) {
+                <div class="text-center space-y-4 p-8 glass-card rounded-3xl max-w-md w-full">
+                    <i class="fa-solid fa-music text-5xl text-brand-500 animate-bounce"></i>
+                    <audio controls src="${fileUrl}" class="w-full mt-4"></audio>
+                </div>`;
+            } else if (fileMeta.type.startsWith('video/')) {
+                body.innerHTML = `<video controls src="${fileUrl}" class="max-h-[80vh] w-full rounded-2xl"></video>`;
+            } else {
                 body.innerHTML = `
-                    <iframe src="${file.dataUrl}" class="w-full h-full rounded-2xl border-0" title="PDF Preview"></iframe>
-                `;
-            } 
-            // Media Preview
-            else if (file.category === 'media' && file.dataUrl) {
-                if (file.type.includes('video') || ['mp4', 'mkv', 'webm', 'mov'].includes(file.ext)) {
-                    body.innerHTML = `<video controls src="${file.dataUrl}" class="max-h-full w-full rounded-2xl shadow-xl"></video>`;
-                } else {
-                    body.innerHTML = `
-                        <div class="text-center space-y-4 p-8 my-auto">
-                            <div class="w-20 h-20 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-4xl mx-auto animate-pulse shadow-inner">
-                                <i class="fa-solid fa-music"></i>
-                            </div>
-                            <p class="text-sm font-bold text-slate-200">${file.name}</p>
-                            <audio controls src="${file.dataUrl}" class="w-full max-w-md mx-auto"></audio>
-                        </div>
-                    `;
-                }
-            } 
-            // Code & Text Preview
-            else if (['txt', 'md', 'json', 'js', 'css', 'html', 'py', 'c', 'cpp', 'csv'].includes(file.ext) && file.dataUrl) {
-                try {
-                    const base64Content = file.dataUrl.split(',')[1];
-                    const decodedText = decodeURIComponent(escape(atob(base64Content)));
-                    body.innerHTML = `
-                        <pre class="w-full h-full p-4 text-xs font-mono bg-slate-900 text-emerald-400 overflow-auto rounded-2xl text-right dir-ltr whitespace-pre-wrap leading-relaxed">${escapeHtml(decodedText)}</pre>
-                    `;
-                } catch(e) {
-                    renderFallbackPreview(body, file, iconStyle);
-                }
-            } 
-            else {
-                renderFallbackPreview(body, file, iconStyle);
+                <div class="text-center space-y-4 p-8 glass-card rounded-3xl">
+                    <i class="fa-solid fa-file-lines text-5xl text-amber-400"></i>
+                    <p class="text-sm text-slate-300">لا تتوفر معاينة مباشرة لهذا النوع من الملفات.</p>
+                    <button onclick="downloadFile('${fileId}')" class="px-6 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs">تحميل الملف</button>
+                </div>`;
             }
 
             modal.classList.remove('hidden');
-        };
-
-        function renderFallbackPreview(container, file, iconStyle) {
-            container.innerHTML = `
-                <div class="text-center space-y-4 p-8 my-auto">
-                    <div class="w-20 h-20 rounded-3xl ${iconStyle.color} flex items-center justify-center text-4xl mx-auto shadow-inner">
-                        <i class="fa-solid ${iconStyle.icon}"></i>
-                    </div>
-                    <div class="space-y-1">
-                        <h4 class="text-base font-bold text-slate-200">${file.name}</h4>
-                        <p class="text-xs text-slate-400">${formatBytes(file.size)} • ملف ${file.ext.toUpperCase()}</p>
-                    </div>
-                </div>
-            `;
         }
 
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.add('hidden');
         }
 
-        window.downloadFile = async function(id) {
-            let file = filesData.find(f => f.id === id);
-            if (!file || !file.dataUrl) {
-                file = await getFileFromIDB(id);
-            }
+        // Trigger file download
+        function downloadFile(fileId) {
+            const blob = fileBlobs.get(fileId);
+            const fileMeta = filesList.find(f => f.id === fileId);
 
-            if (!file || !file.dataUrl) {
-                showToast("محتوى الملف غير متوفر للتحميل", "error");
+            if (!blob || !fileMeta) {
+                showToast('الملف غير متوفر للتحميل!', 'error');
                 return;
             }
 
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = file.dataUrl;
-            a.download = file.name;
+            a.href = url;
+            a.download = fileMeta.name;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            showToast("جاري بدء التنزيل...");
-        };
-
-        window.deleteFile = function(id) {
-            showConfirmModal("حذف الملف", "هل أنت تأكد من حذف هذا الملف من الغرفة؟", async () => {
-                filesData = filesData.filter(f => f.id !== id);
-                await deleteFileFromIDB(id);
-                renderFiles();
-
-                broadcastToPeers({
-                    type: 'DELETE_FILE',
-                    id: id
-                });
-
-                showToast("تم حذف الملف بنجاح");
-            });
-        };
-
-        function showConfirmModal(title, message, onConfirm) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('confirmModalTitle').innerText = title;
-            document.getElementById('confirmModalMessage').innerText = message;
-
-            const yesBtn = document.getElementById('confirmYesBtn');
-            const noBtn = document.getElementById('confirmNoBtn');
-
-            const close = () => modal.classList.add('hidden');
-
-            yesBtn.onclick = () => {
-                close();
-                onConfirm();
-            };
-            noBtn.onclick = close;
-
-            modal.classList.remove('hidden');
+            URL.revokeObjectURL(url);
+            showToast(`جاري تحميل: ${fileMeta.name}`, 'success');
         }
 
+        function deleteFile(fileId) {
+            filesList = filesList.filter(f => f.id !== fileId);
+            fileBlobs.delete(fileId);
+
+            if (db) {
+                const transaction = db.transaction(['files'], 'readwrite');
+                transaction.objectStore('files').delete(fileId);
+            }
+
+            renderFiles();
+            showToast('تم حذف الملف من القائمة', 'info');
+        }
+
+        function confirmClearAllFiles() {
+            if (filesList.length === 0) return;
+            filesList = [];
+            fileBlobs.clear();
+            if (db) {
+                const transaction = db.transaction(['files'], 'readwrite');
+                transaction.objectStore('files').clear();
+            }
+            renderFiles();
+            showToast('تم إفراغ كافة الملفات', 'info');
+        }
+
+
+        function updateRoomPinUI(pin) {
+            document.getElementById('roomPinDisplay').innerText = pin;
+            generateQRCode(pin);
+        }
+
+        function updateStatus(text, color) {
+            const dot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.innerText = text;
+            if (color === 'emerald') {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+            } else if (color === 'amber') {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+            }
+        }
+
+        function updatePeerCount() {
+            const count = Math.max(activeConnections.size, activeLocalPeers.size) + 1;
+            document.getElementById('peerCount').innerText = count;
+        }
+
+        function showUploadProgress(fileName, percent) {
+            const container = document.getElementById('uploadProgressContainer');
+            const nameEl = document.getElementById('uploadFileName');
+            const percentEl = document.getElementById('uploadPercent');
+            const bar = document.getElementById('uploadProgressBar');
+
+            container.classList.remove('hidden');
+            nameEl.innerText = fileName;
+            percentEl.innerText = percent + '%';
+            bar.style.width = percent + '%';
+        }
+
+        function hideUploadProgress() {
+            document.getElementById('uploadProgressContainer').classList.add('hidden');
+        }
+
+        // Room Joining Modal Functions
+        function openJoinModal() {
+            document.getElementById('joinModal').classList.remove('hidden');
+        }
+
+        function closeJoinModal() {
+            document.getElementById('joinModal').classList.add('hidden');
+        }
+
+        function moveNextPinInput(elem, index) {
+            if (elem.value.length >= 1 && index < 3) {
+                document.querySelectorAll('.pin-digit')[index + 1].focus();
+            }
+        }
+
+        function submitJoinRoom() {
+            const digits = Array.from(document.querySelectorAll('.pin-digit')).map(i => i.value).join('');
+            if (digits.length !== 4) {
+                showToast('يرجى كتابة رمز الغرفة المكون من 4 أرقام كاملاً', 'error');
+                return;
+            }
+
+            closeJoinModal();
+            initPeer(digits);
+            window.location.hash = `room=${digits}`;
+        }
+
+        function createNewRoom() {
+            initPeer();
+            window.location.hash = '';
+            showToast('تم إنشاء غرفة جديدة برمز منفصل', 'success');
+        }
+
+        // QR Code Generator
+        function generateQRCode(pin) {
+            const qrContainer = document.getElementById('qrcodeContainer');
+            qrContainer.innerHTML = '';
+            const roomUrl = `${window.location.origin}${window.location.pathname}#room=${pin}`;
+            new QRCode(qrContainer, {
+                text: roomUrl,
+                width: 180,
+                height: 180,
+                colorDark: '#0f172a',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function showQRCodeModal() {
+            document.getElementById('qrModal').classList.remove('hidden');
+        }
+
+        function closeQRCodeModal() {
+            document.getElementById('qrModal').classList.add('hidden');
+        }
+
+        function copyRoomLink() {
+            const roomUrl = `${window.location.origin}${window.location.pathname}#room=${currentRoomPin}`;
+            const tempInput = document.createElement('input');
+            tempInput.value = roomUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('تم نسخ رابط الغرفة بنجاح!', 'success');
+        }
+
+        // Dynamic Toast Notifications
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             
-            const isError = type === 'error';
-            toast.className = `pointer-events-auto px-4 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 ${
-                isError ? 'bg-rose-600 border border-rose-500' : 'bg-slate-900/90 border border-brand-500/40'
-            }`;
+            const bgClass = type === 'success' ? 'bg-emerald-950/90 border-emerald-800 text-emerald-200' :
+                            type === 'error' ? 'bg-rose-950/90 border-rose-800 text-rose-200' :
+                            'bg-slate-900/90 border-slate-700 text-slate-200';
 
-            toast.innerHTML = `
-                <i class="fa-solid ${isError ? 'fa-circle-exclamation text-rose-300 text-sm' : 'fa-circle-check text-brand-400 text-sm'}"></i>
-                <span>${message}</span>
-            `;
+            const icon = type === 'success' ? 'fa-circle-check text-emerald-400' :
+                         type === 'error' ? 'fa-circle-xmark text-rose-400' : 'fa-circle-info text-cyan-400';
+
+            toast.className = `glass-card p-3 px-4 rounded-2xl border ${bgClass} text-xs font-bold shadow-xl flex items-center space-x-2 space-x-reverse transition-all duration-300 pointer-events-auto transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
 
             container.appendChild(toast);
 
@@ -1276,186 +1206,24 @@
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
-            }, 3200);
+            }, 3500);
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initPeerConnection(currentRoomCode);
+        window.addEventListener('load', async () => {
+            await initDB();
 
-            // Re-connect trigger on status badge click
-            document.getElementById('connectionStatusBadge').addEventListener('click', () => {
-                initPeerConnection(currentRoomCode);
-            });
-
-            // Search input listener
-            document.getElementById('searchInput').addEventListener('input', renderFiles);
-
-            // Sort Selector Listener
-            document.getElementById('sortSelect').addEventListener('change', (e) => {
-                sortBy = e.target.value;
-                renderFiles();
-            });
-
-            // Clear Room Button
-            document.getElementById('clearRoomBtn').addEventListener('click', () => {
-                showConfirmModal("تفريغ الغرفة", "هل أنت تأكد من رغبتك في مسح جميع الملفات المرفوعة بالكامل؟", async () => {
-                    filesData = [];
-                    await clearIDB();
-                    renderFiles();
-
-                    broadcastToPeers({ type: 'CLEAR_ROOM' });
-                    showToast("تم إفراغ محتويات الغرفة بنجاح");
-                });
-            });
-
-            // Category buttons
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.category-btn').forEach(b => {
-                        b.classList.remove('bg-gradient-to-r', 'from-brand-600', 'to-indigo-600', 'text-white', 'shadow-md', 'font-bold');
-                        b.classList.add('text-slate-400');
-                    });
-                    e.target.classList.add('bg-gradient-to-r', 'from-brand-600', 'to-indigo-600', 'text-white', 'shadow-md', 'font-bold');
-                    e.target.classList.remove('text-slate-400');
-
-                    currentCategory = e.target.dataset.category;
-                    renderFiles();
-                });
-            });
-
-            // View Layout Toggle Buttons
-            document.getElementById('viewGridBtn').addEventListener('click', () => {
-                viewMode = 'grid';
-                document.getElementById('viewGridBtn').className = 'p-2 rounded-xl bg-slate-800 text-brand-400 font-bold transition-all';
-                document.getElementById('viewListBtn').className = 'p-2 rounded-xl text-slate-400 hover:text-white transition-all';
-                renderFiles();
-            });
-
-            document.getElementById('viewListBtn').addEventListener('click', () => {
-                viewMode = 'list';
-                document.getElementById('viewListBtn').className = 'p-2 rounded-xl bg-slate-800 text-brand-400 font-bold transition-all';
-                document.getElementById('viewGridBtn').className = 'p-2 rounded-xl text-slate-400 hover:text-white transition-all';
-                renderFiles();
-            });
-
-            // Upload Modal UI
-            const uploadModal = document.getElementById('uploadModal');
-            const openUploadBtn = document.getElementById('openUploadBtn');
-            const emptyUploadBtn = document.getElementById('emptyUploadBtn');
-            const closeUploadModalBtn = document.getElementById('closeUploadModalBtn');
-            const cancelUploadBtn = document.getElementById('cancelUploadBtn');
-            const dropzone = document.getElementById('dropzone');
-            const fileInput = document.getElementById('fileInput');
-
-            const openUpload = () => uploadModal.classList.remove('hidden');
-            const closeUpload = () => uploadModal.classList.add('hidden');
-
-            openUploadBtn.addEventListener('click', openUpload);
-            emptyUploadBtn.addEventListener('click', openUpload);
-            closeUploadModalBtn.addEventListener('click', closeUpload);
-            cancelUploadBtn.addEventListener('click', closeUpload);
-
-            dropzone.addEventListener('click', () => fileInput.click());
-
-            dropzone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropzone.classList.add('border-brand-500', 'bg-slate-900/80');
-            });
-
-            dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
-            });
-
-            dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
-                if (e.dataTransfer.files.length > 0) {
-                    handleFilesUpload(e.dataTransfer.files);
+            // Check if URL has direct room hash parameter (#room=4829)
+            const hash = window.location.hash;
+            if (hash && hash.includes('room=')) {
+                const pin = hash.split('room=')[1].substring(0, 4);
+                if (pin && pin.length === 4) {
+                    initPeer(pin);
+                    return;
                 }
-            });
+            }
 
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFilesUpload(e.target.files);
-                }
-            });
-
-            // Join Room PIN Modal
-            const joinRoomModal = document.getElementById('joinRoomModal');
-            const openJoinModalBtn = document.getElementById('openJoinModalBtn');
-            const closeJoinRoomBtn = document.getElementById('closeJoinRoomBtn');
-            const confirmJoinRoomBtn = document.getElementById('confirmJoinRoomBtn');
-            const generateNewRoomBtn = document.getElementById('generateNewRoomBtn');
-            const pinCodeInput = document.getElementById('pinCodeInput');
-
-            openJoinModalBtn.addEventListener('click', () => {
-                pinCodeInput.value = '';
-                joinRoomModal.classList.remove('hidden');
-                pinCodeInput.focus();
-            });
-
-            closeJoinRoomBtn.addEventListener('click', () => joinRoomModal.classList.add('hidden'));
-
-            confirmJoinRoomBtn.addEventListener('click', () => {
-                const code = pinCodeInput.value.trim();
-                if (/^\d{4}$/.test(code)) {
-                    joinRoomModal.classList.add('hidden');
-                    initPeerConnection(code);
-                } else {
-                    showToast("يرجى إدخال رمز مكون من 4 أرقام", "error");
-                }
-            });
-
-            generateNewRoomBtn.addEventListener('click', () => {
-                const newCode = generate4DigitCode();
-                joinRoomModal.classList.add('hidden');
-                initPeerConnection(newCode);
-            });
-
-            // QR & Share Link Modal
-            const shareHubBtn = document.getElementById('shareHubBtn');
-            const shareHubModal = document.getElementById('shareHubModal');
-            const closeShareHubBtn = document.getElementById('closeShareHubBtn');
-            const shareUrlInput = document.getElementById('shareUrlInput');
-            const copyShareUrlBtn = document.getElementById('copyShareUrlBtn');
-            const qrCodeContainer = document.getElementById('qrCodeContainer');
-
-            shareHubBtn.addEventListener('click', () => {
-                const currentUrl = window.location.origin + window.location.pathname + '#' + currentRoomCode;
-                shareUrlInput.value = currentUrl;
-                qrCodeContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(currentUrl)}" alt="QR Code" class="w-40 h-40 rounded-xl">`;
-                shareHubModal.classList.remove('hidden');
-            });
-
-            closeShareHubBtn.addEventListener('click', () => shareHubModal.classList.add('hidden'));
-
-            copyShareUrlBtn.addEventListener('click', async () => {
-                const urlToCopy = shareUrlInput.value;
-                try {
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        await navigator.clipboard.writeText(urlToCopy);
-                    } else {
-                        shareUrlInput.select();
-                        document.execCommand('copy');
-                    }
-                    showToast("تم نسخ رابط الغرفة بنجاح!");
-                } catch(err) {
-                    showToast("تعذر نسخ الرابط تلقائياً", "error");
-                }
-            });
-
-            // Preview Modal Close
-            document.getElementById('closePreviewBtn').addEventListener('click', () => {
-                document.getElementById('previewModal').classList.add('hidden');
-            });
-
-            // Handle URL Hash changes
-            window.addEventListener('hashchange', () => {
-                const hash = window.location.hash.replace('#', '').trim();
-                if (/^\d{4}$/.test(hash) && hash !== currentRoomCode) {
-                    initPeerConnection(hash);
-                }
-            });
+            // Default Host setup
+            initPeer();
         });
     </script>
 </body>
