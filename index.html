@@ -31,16 +31,16 @@
                     },
                     colors: {
                         brand: {
-                            50: '#eef2ff',
+                            50: '#f0f5ff',
                             500: '#6366f1',
                             600: '#4f46e5',
                             700: '#4338ca',
                             900: '#1e1b4b',
                         },
                         accent: {
-                            cyan: '#0891b2',
-                            emerald: '#059669',
-                            rose: '#e11d48',
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
                         }
                     },
                     animation: {
@@ -49,8 +49,8 @@
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%, 100%': { opacity: '1', boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)' },
-                            '50%': { opacity: '0.6', boxShadow: '0 0 5px rgba(99, 102, 241, 0.1)' },
+                            '0%, 100%': { opacity: '1', boxShadow: '0 0 15px rgba(99, 102, 241, 0.6)' },
+                            '50%': { opacity: '0.6', boxShadow: '0 0 5px rgba(99, 102, 241, 0.2)' },
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
@@ -65,12 +65,12 @@
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background: #f8fafc;
-            color: #0f172a;
+            background: #090d16;
+            color: #f1f5f9;
             overflow-x: hidden;
         }
         
-        /* Light ambient background mesh */
+        /* Custom animated background ambient mesh */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -79,40 +79,40 @@
             height: 100vh;
             z-index: -1;
             background: 
-                radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+                radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
             filter: blur(40px);
         }
 
-        /* Glassmorphism light card utility */
+        /* Glassmorphism card utility */
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .glass-card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .glass-card-hover:hover {
-            transform: translateY(-3px);
-            border-color: rgba(99, 102, 241, 0.4);
-            box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.12);
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.15);
         }
 
-        /* Custom Light Scrollbar */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(241, 245, 249, 0.8);
+            background: rgba(15, 23, 42, 0.6);
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #334155;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
@@ -126,19 +126,19 @@
     <div class="ambient-bg"></div>
 
     <!-- Top Header Navigation -->
-    <header class="sticky top-0 z-40 glass-card border-b border-slate-200/80 px-4 lg:px-8 py-3">
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 lg:px-8 py-3">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
             
             <!-- Logo & Title -->
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-accent-cyan flex items-center justify-center text-white shadow-md shadow-brand-500/20 animate-float">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-accent-cyan flex items-center justify-center text-white shadow-lg shadow-brand-500/30 animate-float">
                     <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black text-slate-800">
+                    <h1 class="text-xl font-black bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
                         مركز المشاركة السحابية
                     </h1>
-                    <p class="text-xs text-slate-500">مشاركة سريعة ومباشرة P2P بدون حدود</p>
+                    <p class="text-xs text-slate-400">مشاركة سريعة ومباشرة P2P بدون حدود</p>
                 </div>
             </div>
 
@@ -146,26 +146,26 @@
             <div class="flex items-center flex-wrap gap-3">
                 
                 <!-- Active Connection Status Indicator -->
-                <div id="statusBadge" class="flex items-center space-x-2 space-x-reverse px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
+                <div id="statusBadge" class="flex items-center space-x-2 space-x-reverse px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-300">
                     <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
                     <span id="statusText">جاري الاتصال بالنظام...</span>
                 </div>
 
                 <!-- Live Connected Devices Counter -->
-                <div class="flex items-center space-x-2 space-x-reverse px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-xs font-semibold text-indigo-700">
-                    <i class="fa-solid fa-users text-indigo-500"></i>
+                <div class="flex items-center space-x-2 space-x-reverse px-3 py-1.5 rounded-full bg-indigo-950/60 border border-indigo-800/50 text-xs font-semibold text-indigo-300">
+                    <i class="fa-solid fa-users text-indigo-400"></i>
                     <span>الأجهزة المتصلة:</span>
                     <span id="peerCount" class="bg-indigo-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">1</span>
                 </div>
 
                 <!-- Join Room Button -->
-                <button onclick="openJoinModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-700 flex items-center space-x-2 space-x-reverse transition-all active:scale-95">
-                    <i class="fa-solid fa-key text-accent-cyan"></i>
+                <button onclick="openJoinModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center space-x-2 space-x-reverse transition-all active:scale-95">
+                    <i class="fa-solid fa-[#key] fa-key text-accent-cyan"></i>
                     <span>إدخال رمز الغرفة</span>
                 </button>
 
                 <!-- New Room Button -->
-                <button onclick="createNewRoom()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white shadow-md shadow-brand-600/20 flex items-center space-x-2 space-x-reverse transition-all active:scale-95">
+                <button onclick="createNewRoom()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white shadow-lg shadow-brand-600/30 flex items-center space-x-2 space-x-reverse transition-all active:scale-95">
                     <i class="fa-solid fa-plus"></i>
                     <span>غرفة جديدة</span>
                 </button>
@@ -177,37 +177,37 @@
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full flex-grow space-y-8">
 
         <!-- Room PIN & Quick Share Banner -->
-        <section class="glass-card rounded-3xl p-6 lg:p-8 relative overflow-hidden border border-slate-200">
+        <section class="glass-card rounded-3xl p-6 lg:p-8 relative overflow-hidden border border-slate-700/50">
             <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
             
             <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
                 <div class="space-y-2 text-center md:text-right">
-                    <div class="inline-flex items-center space-x-2 space-x-reverse text-xs font-bold text-accent-cyan bg-cyan-50 border border-cyan-200 px-3 py-1 rounded-full">
+                    <div class="inline-flex items-center space-x-2 space-x-reverse text-xs font-bold text-accent-cyan bg-cyan-950/60 border border-cyan-800/40 px-3 py-1 rounded-full">
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>اتصال مشفر ومباشر بين الأجهزة (WebRTC)</span>
                     </div>
-                    <h2 class="text-2xl lg:text-3xl font-black text-slate-800">رمز الاقتران المباشر</h2>
-                    <p class="text-sm text-slate-500 max-w-xl">
+                    <h2 class="text-2xl lg:text-3xl font-black text-white">رمز الاقتران المباشر</h2>
+                    <p class="text-sm text-slate-400 max-w-xl">
                         ادخل هذا الرمز المكون من 4 أرقام في أي جهاز آخر لتوصيلهما فورياً ومشاركة الصور والكتب والملفات بدون رفع على خوادم خارجية.
                     </p>
                 </div>
 
                 <!-- 4-Digit Room Code Display & Copy -->
-                <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-inner w-full md:w-auto justify-center">
+                <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 shadow-inner w-full md:w-auto justify-center">
                     <div class="text-center">
-                        <span class="text-xs text-slate-500 block mb-1">كود الغرفة الحالي</span>
-                        <div id="roomPinDisplay" class="text-3xl font-black tracking-widest text-brand-600 font-mono">
+                        <span class="text-xs text-slate-400 block mb-1">كود الغرفة الحالي</span>
+                        <div id="roomPinDisplay" class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan via-brand-500 to-accent-emerald font-mono">
                             ----
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-2">
                         <!-- Copy PIN Button -->
-                        <button onclick="copyRoomLink()" title="نسخ رابط الغرفة" class="p-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 transition-all active:scale-95 shadow-sm">
+                        <button onclick="copyRoomLink()" title="نسخ رابط الغرفة" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 hover:text-white transition-all active:scale-95">
                             <i class="fa-solid fa-copy text-lg"></i>
                         </button>
                         <!-- QR Code Button -->
-                        <button onclick="showQRCodeModal()" title="عرض رمز QR" class="p-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-accent-cyan hover:text-cyan-700 transition-all active:scale-95 shadow-sm">
+                        <button onclick="showQRCodeModal()" title="عرض رمز QR" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-accent-cyan hover:text-cyan-300 transition-all active:scale-95">
                             <i class="fa-solid fa-qrcode text-lg"></i>
                         </button>
                     </div>
@@ -216,44 +216,44 @@
         </section>
 
         <!-- Drag & Drop Upload Zone -->
-        <section class="glass-card glass-card-hover rounded-3xl p-8 border-2 border-dashed border-slate-300 hover:border-brand-500 transition-all text-center relative group cursor-pointer bg-white/60"
+        <section class="glass-card glass-card-hover rounded-3xl p-8 border-2 border-dashed border-slate-700/80 hover:border-brand-500 transition-all text-center relative group cursor-pointer"
                  id="dropZone"
                  onclick="document.getElementById('fileInput').click()"
                  ondragover="handleDragOver(event)"
                  ondragleave="handleDragLeave(event)"
                  ondrop="handleFileDrop(event)">
             
-            <input type="file" id="fileInput" multiple class="hidden" onchange="handleFileSelect(event)">
+            <input type="file" id="fileInput" multiple class="hidden" accept="*/*,.apk,.mp4,.mkv,.avi,.mov,.webm,.pdf,.zip,.rar,.7z" onchange="handleFileSelect(event)">
             
             <div class="space-y-4 pointer-events-none">
-                <div class="w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center mx-auto text-2xl group-hover:scale-110 transition-transform">
+                <div class="w-16 h-16 rounded-2xl bg-brand-600/20 text-brand-500 border border-brand-500/30 flex items-center justify-center mx-auto text-2xl group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800 group-hover:text-brand-600 transition-colors">
+                    <h3 class="text-lg font-bold text-white group-hover:text-brand-500 transition-colors">
                         اسحب الملفات أو الكتب أو الصور هنا لإرسالها فوراً
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1">
+                    <p class="text-xs text-slate-400 mt-1">
                         يدعم كافة الصيغ (PDF, EPUB, JPG, PNG, MP4, MP3, ZIP...) بدون حد أقصى للحجم
                     </p>
                 </div>
-                <div class="inline-flex items-center space-x-2 space-x-reverse bg-slate-100 border border-slate-200 px-4 py-2 rounded-xl text-xs text-slate-700 font-medium">
-                    <i class="fa-solid fa-folder-open text-amber-500"></i>
+                <div class="inline-flex items-center space-x-2 space-x-reverse bg-slate-800/80 border border-slate-700 px-4 py-2 rounded-xl text-xs text-slate-300">
+                    <i class="fa-solid fa-folder-open text-amber-400"></i>
                     <span>أو اضغط هنا لاختيار الملفات من جهازك</span>
                 </div>
             </div>
 
             <!-- Upload Progress Bar Overlay -->
-            <div id="uploadProgressContainer" class="hidden absolute inset-0 bg-white/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 z-20 shadow-xl">
+            <div id="uploadProgressContainer" class="hidden pointer-events-none absolute inset-0 bg-slate-950/90 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 z-20">
                 <div class="w-full max-w-md space-y-3">
-                    <div class="flex justify-between text-xs font-bold text-slate-700">
+                    <div class="flex justify-between text-xs font-bold text-slate-300">
                         <span id="uploadFileName">جاري إرسال الملف...</span>
                         <span id="uploadPercent">0%</span>
                     </div>
-                    <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                    <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700">
                         <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-brand-500 to-accent-cyan rounded-full transition-all duration-150 w-0"></div>
                     </div>
-                    <p id="uploadSpeedText" class="text-xs text-slate-500 text-center">جاري نقل البيانات عبر الـ P2P المباشر...</p>
+                    <p id="uploadSpeedText" class="text-xs text-slate-400 text-center">جاري نقل البيانات عبر الـ P2P المباشر...</p>
                 </div>
             </div>
         </section>
@@ -264,30 +264,30 @@
                 
                 <!-- Category Filters -->
                 <div class="flex items-center overflow-x-auto pb-2 md:pb-0 gap-2 no-scrollbar">
-                    <button onclick="setFilter('all')" class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-brand-600 text-white shadow-md shadow-brand-600/20" data-category="all">
+                    <button onclick="setFilter('all')" class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-brand-600 text-white shadow-md shadow-brand-600/30" data-category="all">
                         <i class="fa-solid fa-border-all ml-1"></i> الكل (<span id="countAll">0</span>)
                     </button>
-                    <button onclick="setFilter('books')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200" data-category="books">
-                        <i class="fa-solid fa-book ml-1 text-emerald-600"></i> الكتب والمستندات (<span id="countBooks">0</span>)
+                    <button onclick="setFilter('books')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="books">
+                        <i class="fa-solid fa-book ml-1 text-emerald-400"></i> الكتب والمستندات (<span id="countBooks">0</span>)
                     </button>
-                    <button onclick="setFilter('images')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200" data-category="images">
-                        <i class="fa-solid fa-image ml-1 text-cyan-600"></i> الصور (<span id="countImages">0</span>)
+                    <button onclick="setFilter('images')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="images">
+                        <i class="fa-solid fa-image ml-1 text-cyan-400"></i> الصور (<span id="countImages">0</span>)
                     </button>
-                    <button onclick="setFilter('media')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200" data-category="media">
-                        <i class="fa-solid fa-photo-film ml-1 text-rose-600"></i> الوسائط (<span id="countMedia">0</span>)
+                    <button onclick="setFilter('media')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="media">
+                        <i class="fa-solid fa-photo-film ml-1 text-rose-400"></i> الوسائط (<span id="countMedia">0</span>)
                     </button>
-                    <button onclick="setFilter('others')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200" data-category="others">
-                        <i class="fa-solid fa-box-archive ml-1 text-amber-600"></i> ملفات أخرى (<span id="countOthers">0</span>)
+                    <button onclick="setFilter('others')" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800" data-category="others">
+                        <i class="fa-solid fa-box-archive ml-1 text-amber-400"></i> ملفات أخرى (<span id="countOthers">0</span>)
                     </button>
                 </div>
 
                 <!-- Search Input & Clear All -->
                 <div class="flex items-center gap-2">
                     <div class="relative flex-grow md:w-64">
-                        <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchInput" oninput="renderFiles()" placeholder="ابحث باسم الملف..." class="w-full bg-white border border-slate-200 rounded-xl pl-3 pr-9 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 shadow-sm transition-colors">
+                        <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="text" id="searchInput" oninput="renderFiles()" placeholder="ابحث باسم الملف..." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-3 pr-9 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors">
                     </div>
-                    <button onclick="confirmClearAllFiles()" class="px-3 py-2 rounded-xl bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-slate-500 hover:text-rose-600 text-xs transition-colors shadow-sm" title="مسح قائمة الملفات">
+                    <button onclick="confirmClearAllFiles()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-rose-950/40 border border-slate-700 hover:border-rose-800/50 text-slate-400 hover:text-rose-400 text-xs transition-colors" title="مسح قائمة الملفات">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
@@ -299,12 +299,12 @@
             </div>
 
             <!-- Empty State Display -->
-            <div id="emptyState" class="glass-card rounded-3xl p-12 text-center space-y-4 border border-slate-200 bg-white/70">
-                <div class="w-20 h-20 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto text-3xl text-slate-400">
+            <div id="emptyState" class="glass-card rounded-3xl p-12 text-center space-y-4 border border-slate-800">
+                <div class="w-20 h-20 rounded-full bg-slate-800/60 border border-slate-700 flex items-center justify-center mx-auto text-3xl text-slate-500">
                     <i class="fa-solid fa-folder-open"></i>
                 </div>
                 <div>
-                    <h4 class="text-base font-bold text-slate-700">لا توجد ملفات في هذه الغرفة بعد</h4>
+                    <h4 class="text-base font-bold text-slate-300">لا توجد ملفات في هذه الغرفة بعد</h4>
                     <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
                         قم برفع صور أو كتب أو ملفات، وسوف تظهر فوراً لدى جميع الأجهزة المتصلة بكود الغرفة.
                     </p>
@@ -315,33 +315,33 @@
     </main>
 
     <!-- Modal 1: Join Room Modal -->
-    <div id="joinModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-card rounded-3xl p-6 lg:p-8 max-w-md w-full border border-slate-200 bg-white shadow-2xl space-y-6">
+    <div id="joinModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 lg:p-8 max-w-md w-full border border-slate-700 space-y-6 animate-float">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center">
-                        <i class="fa-solid fa-key text-lg"></i>
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                        <i class="fa-solid fa-[#key] fa-key text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">الانضمام لغرفة مشاركة</h3>
-                        <p class="text-xs text-slate-500">ادخل رمز الـ 4 أرقام المكتوب في الجهاز الرئيسي</p>
+                        <h3 class="text-lg font-bold text-white">الانضمام لغرفة مشاركة</h3>
+                        <p class="text-xs text-slate-400">ادخل رمز الـ 4 أرقام المكتوب في الجهاز الرئيسي</p>
                     </div>
                 </div>
-                <button onclick="closeJoinModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                <button onclick="closeJoinModal()" class="text-slate-400 hover:text-white text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <!-- 4 Digits Input -->
             <div class="flex justify-center dir-ltr gap-3">
-                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-50 border-2 border-slate-200 rounded-2xl text-brand-600 focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 0)">
-                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-50 border-2 border-slate-200 rounded-2xl text-brand-600 focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 1)">
-                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-50 border-2 border-slate-200 rounded-2xl text-brand-600 focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 2)">
-                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-50 border-2 border-slate-200 rounded-2xl text-brand-600 focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 3)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 0)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 1)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 2)">
+                <input type="text" maxlength="1" class="pin-digit w-14 h-16 text-center text-2xl font-black bg-slate-900 border-2 border-slate-700 rounded-2xl text-accent-cyan focus:border-brand-500 focus:outline-none transition-all" onkeyup="moveNextPinInput(this, 3)">
             </div>
 
             <div class="flex gap-3">
-                <button onclick="submitJoinRoom()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-accent-cyan font-bold text-sm text-white shadow-md shadow-brand-600/20 transition-all active:scale-95">
+                <button onclick="submitJoinRoom()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-accent-cyan font-bold text-sm text-white shadow-lg shadow-brand-600/30 transition-all active:scale-95">
                     انضمام للغرفة الآن
                 </button>
             </div>
@@ -349,35 +349,35 @@
     </div>
 
     <!-- Modal 2: QR Code Share Modal -->
-    <div id="qrModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-card rounded-3xl p-6 max-w-sm w-full border border-slate-200 bg-white shadow-2xl text-center space-y-6">
+    <div id="qrModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 max-w-sm w-full border border-slate-700 text-center space-y-6">
             <div class="flex items-center justify-between">
-                <h3 class="text-base font-bold text-slate-800">رمز الـ QR الخاص بالغرفة</h3>
-                <button onclick="closeQRCodeModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                <h3 class="text-base font-bold text-white">رمز الـ QR الخاص بالفرقة</h3>
+                <button onclick="closeQRCodeModal()" class="text-slate-400 hover:text-white text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div class="p-4 bg-slate-50 rounded-2xl inline-block border border-slate-200 shadow-inner" id="qrcodeContainer"></div>
+            <div class="p-4 bg-white rounded-2xl inline-block shadow-xl" id="qrcodeContainer"></div>
 
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-400">
                 امسح هذا الرمز بكاميرا الهاتف للاتصال والوصول للملفات مباشرة
             </p>
         </div>
     </div>
 
     <!-- Modal 3: Media & Document Previewer -->
-    <div id="previewModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md hidden flex flex-col">
-        <div class="flex items-center justify-between p-4 border-b border-slate-200 bg-white glass-card">
+    <div id="previewModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-lg hidden flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b border-slate-800 glass-card">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <i id="previewIcon" class="fa-solid fa-file text-brand-600 text-xl"></i>
-                <span id="previewTitle" class="text-sm font-bold text-slate-800 truncate max-w-xs md:max-w-md">معاينة الملف</span>
+                <i id="previewIcon" class="fa-solid fa-file text-brand-500 text-xl"></i>
+                <span id="previewTitle" class="text-sm font-bold text-white truncate max-w-xs md:max-w-md">معاينة الملف</span>
             </div>
             <div class="flex items-center space-x-2 space-x-reverse">
-                <button id="previewDownloadBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white transition-all shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-download"></i> تنزيل الملف
+                <button id="previewDownloadBtn" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white transition-all">
+                    <i class="fa-solid fa-download ml-1"></i> تحميل
                 </button>
-                <button onclick="closePreviewModal()" class="p-2 text-slate-400 hover:text-slate-600 text-lg">
+                <button onclick="closePreviewModal()" class="p-2 text-slate-400 hover:text-white text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -391,12 +391,12 @@
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
     <!-- Footer -->
-    <footer class="glass-card border-t border-slate-200/80 py-4 px-4 text-center text-xs text-slate-500 mt-12 bg-white/60">
+    <footer class="glass-card border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-500 mt-12">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <p>منصة مشاركة الملفات والكتب السحابية المباشرة &copy; 2026</p>
-            <div class="flex items-center space-x-4 space-x-reverse text-slate-500">
-                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-500"></i> نقل P2P مباشر</span>
-                <span class="flex items-center gap-1"><i class="fa-solid fa-lock text-emerald-600"></i> بدون تخزين سحابي وسيط</span>
+            <div class="flex items-center space-x-4 space-x-reverse text-slate-400">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-400"></i> نقل P2P مباشر</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-lock text-emerald-400"></i> بدون تخزين سحابي وسيط</span>
             </div>
         </div>
     </footer>
@@ -634,7 +634,8 @@
             });
         }
 
-        let incomingTransfers = new Map(); // fileId -> { chunks: [], receivedSize: 0 }
+        let incomingTransfers = new Map(); // fileId -> { chunks: [], receivedSize: 0, conn: DataConnection|null }
+        let pendingDownloads = new Set(); // files requested for automatic download after reception
 
         function handleIncomingData(data, conn) {
             if (data.type === 'SYNC_FILES') {
@@ -649,39 +650,46 @@
                 incomingTransfers.set(data.fileMeta.id, {
                     meta: data.fileMeta,
                     chunks: [],
-                    receivedSize: 0
+                    receivedSize: 0,
+                    conn: conn || null
                 });
-                showUploadProgress(data.fileMeta.name, 0);
+                showUploadProgress('استلام ' + data.fileMeta.name, 0);
             }
             else if (data.type === 'FILE_CHUNK') {
                 const transfer = incomingTransfers.get(data.fileId);
                 if (transfer) {
                     transfer.chunks.push(data.chunk);
                     transfer.receivedSize += data.chunk.byteLength;
-                    
+
                     const progress = Math.min(100, Math.round((transfer.receivedSize / transfer.meta.size) * 100));
-                    showUploadProgress(transfer.meta.name, progress);
+                    showUploadProgress('استلام ' + transfer.meta.name, progress);
 
                     if (transfer.receivedSize >= transfer.meta.size) {
                         const completeBlob = new Blob(transfer.chunks, { type: transfer.meta.type });
                         fileBlobs.set(transfer.meta.id, completeBlob);
-                        
+
                         if (!filesList.some(f => f.id === transfer.meta.id)) {
                             filesList.push(transfer.meta);
                         }
-                        
+
                         saveFileToDB(transfer.meta, completeBlob);
                         incomingTransfers.delete(data.fileId);
                         hideUploadProgress();
                         renderFiles();
-                        showToast(`تم استلام الملف: ${transfer.meta.name} 🎉. اضغط تنزيل لحفظه على الجهاز!`, 'success');
+                        showToast(`تم استلام الملف: ${transfer.meta.name} 🎉`, 'success');
+
+                        // إذا طلب المستخدم التنزيل، يبدأ التنزيل تلقائياً بعد اكتمال الاستقبال.
+                        if (pendingDownloads.has(transfer.meta.id)) {
+                            pendingDownloads.delete(transfer.meta.id);
+                            setTimeout(() => downloadBlobToDevice(transfer.meta, completeBlob), 100);
+                        }
                     }
                 }
             }
             else if (data.type === 'REQUEST_FILE') {
                 const blob = fileBlobs.get(data.fileId);
                 const fileMeta = filesList.find(f => f.id === data.fileId);
-                if (blob && fileMeta) {
+                if (blob && fileMeta && conn) {
                     sendFileToPeer(fileMeta, blob, conn);
                 }
             }
@@ -791,6 +799,7 @@
             readNextChunk();
         }
 
+
         // Categorize file by MIME / Extension
         function getCategory(file) {
             const type = file.type || '';
@@ -802,7 +811,7 @@
             if (['pdf', 'epub', 'doc', 'docx', 'txt', 'rtf'].includes(ext) || type.includes('pdf') || type.includes('text')) {
                 return 'books';
             }
-            if (type.startsWith('audio/') || type.startsWith('video/') || ['mp3', 'wav', 'mp4', 'mkv', 'avi', 'mov'].includes(ext)) {
+            if (type.startsWith('audio/') || type.startsWith('video/') || ['mp3', 'wav', 'mp4', 'mkv', 'avi', 'mov', 'webm', 'm4v'].includes(ext)) {
                 return 'media';
             }
             return 'others';
@@ -819,19 +828,19 @@
         function handleDragOver(e) {
             e.preventDefault();
             e.stopPropagation();
-            document.getElementById('dropZone').classList.add('border-brand-500', 'bg-brand-50');
+            document.getElementById('dropZone').classList.add('border-brand-500', 'bg-brand-500/10');
         }
 
         function handleDragLeave(e) {
             e.preventDefault();
             e.stopPropagation();
-            document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-50');
+            document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-500/10');
         }
 
         function handleFileDrop(e) {
             e.preventDefault();
             e.stopPropagation();
-            document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-50');
+            document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-500/10');
             const files = e.dataTransfer.files;
             if (files && files.length > 0) {
                 processFiles(files);
@@ -860,13 +869,14 @@
             renderFiles();
         }
 
+
         function setFilter(category) {
             currentFilter = category;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.dataset.category === category) {
-                    btn.className = 'filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-brand-600 text-white shadow-md shadow-brand-600/20';
+                    btn.className = 'filter-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-brand-600 text-white shadow-md shadow-brand-600/30';
                 } else {
-                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200';
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800';
                 }
             });
             renderFiles();
@@ -882,10 +892,13 @@
         }
 
         function getFileIcon(category, type) {
-            if (category === 'images') return { icon: 'fa-file-image', color: 'text-cyan-600', bg: 'bg-cyan-50 border border-cyan-100' };
-            if (category === 'books') return { icon: 'fa-book-open', color: 'text-emerald-600', bg: 'bg-emerald-50 border border-emerald-100' };
-            if (category === 'media') return { icon: 'fa-file-audio', color: 'text-rose-600', bg: 'bg-rose-50 border border-rose-100' };
-            return { icon: 'fa-file-zipper', color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-100' };
+            if (type === 'application/vnd.android.package-archive') {
+                return { icon: 'fa-android', color: 'text-green-400', bg: 'bg-green-500/20' };
+            }
+            if (category === 'images') return { icon: 'fa-file-image', color: 'text-cyan-400', bg: 'bg-cyan-500/20' };
+            if (category === 'books') return { icon: 'fa-book-open', color: 'text-emerald-400', bg: 'bg-emerald-500/20' };
+            if (category === 'media') return { icon: 'fa-file-audio', color: 'text-rose-400', bg: 'bg-rose-500/20' };
+            return { icon: 'fa-file-zipper', color: 'text-amber-400', bg: 'bg-amber-500/20' };
         }
 
         function renderFiles() {
@@ -918,19 +931,19 @@
                 const hasBlob = fileBlobs.has(file.id);
 
                 return `
-                <div class="glass-card glass-card-hover rounded-2xl p-4 flex flex-col justify-between border border-slate-200 bg-white relative group">
+                <div class="glass-card glass-card-hover rounded-2xl p-4 flex flex-col justify-between border border-slate-800 relative group">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 rounded-xl ${iconInfo.bg} ${iconInfo.color} flex items-center justify-center text-lg">
                                 <i class="fa-solid ${iconInfo.icon}"></i>
                             </div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${hasBlob ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
-                                ${hasBlob ? '<i class="fa-solid fa-check ml-1"></i> جاهز للتنزيل' : '<i class="fa-solid fa-spinner fa-spin ml-1"></i> متوفر لدى الشركاء'}
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${hasBlob ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/40' : 'bg-amber-950/80 text-amber-400 border border-amber-800/40'}">
+                                ${hasBlob ? 'محفوظ محلياً' : 'متوفر للتحميل'}
                             </span>
                         </div>
 
                         <div>
-                            <h4 class="text-xs font-bold text-slate-800 truncate" title="${file.name}">${file.name}</h4>
+                            <h4 class="text-xs font-bold text-slate-100 truncate" title="${file.name}">${file.name}</h4>
                             <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
                                 <span>${formatBytes(file.size)}</span>
                                 <span>${file.timestamp}</span>
@@ -938,21 +951,21 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100">
+                    <div class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/80">
                         ${hasBlob ? `
-                            <button onclick="downloadFile('${file.id}')" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95" title="تنزيل الملف على جهازك">
-                                <i class="fa-solid fa-download"></i> تنزيل الملف
+                            <button onclick="previewFile('${file.id}')" class="flex-1 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors">
+                                <i class="fa-solid fa-eye ml-1"></i> معاينة
                             </button>
-                            <button onclick="previewFile('${file.id}')" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors flex items-center justify-center gap-1" title="معاينة">
-                                <i class="fa-solid fa-eye"></i> معاينة
+                            <button onclick="downloadFile('${file.id}')" class="py-1.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white transition-colors" title="تنزيل على هذا الجهاز">
+                                <i class="fa-solid fa-download ml-1"></i> تنزيل
                             </button>
                         ` : `
-                            <button onclick="requestFileFromPeers('${file.id}')" class="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-xs font-bold text-white transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95">
-                                <i class="fa-solid fa-cloud-arrow-down"></i> سحب وتنزيل الملف
+                            <button onclick="downloadReceivedFile('${file.id}')" class="flex-1 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-colors">
+                                <i class="fa-solid fa-download ml-1"></i> تنزيل على الجهاز
                             </button>
                         `}
-                        <button onclick="deleteFile('${file.id}')" class="py-2 px-2.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="حذف">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <button onclick="deleteFile('${file.id}')" class="py-1.5 px-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-950/30 transition-colors" title="حذف">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
@@ -960,20 +973,56 @@
             }).join('');
         }
 
+
         // Request a missing blob from connected peers
-        function requestFileFromPeers(fileId) {
+        function requestFileFromPeers(fileId, autoDownload = false) {
+            if (autoDownload) {
+                pendingDownloads.add(fileId);
+            }
+
             if (activeConnections.size === 0) {
+                pendingDownloads.delete(fileId);
                 showToast('لا يوجد أجهزة متصلة حالياً لسحب الملف منها!', 'error');
                 return;
             }
 
-            showToast('جاري طلب الملف من الأجهزة المتصلة...', 'info');
+            showToast(
+                autoDownload
+                    ? 'جاري استلام الملف ثم تنزيله على هذا الجهاز...'
+                    : 'جاري طلب الملف من الأجهزة المتصلة...',
+                'info'
+            );
+
             activeConnections.forEach(conn => {
-                conn.send({
-                    type: 'REQUEST_FILE',
-                    fileId: fileId
-                });
+                try {
+                    conn.send({
+                        type: 'REQUEST_FILE',
+                        fileId: fileId
+                    });
+                } catch (e) {
+                    console.warn('REQUEST_FILE failed:', e);
+                }
             });
+        }
+
+        // زر تنزيل الجهاز المستقبل:
+        // إذا كان الملف موجوداً محلياً ينزله فوراً، وإذا كان مجرد بيانات
+        // قادمة من الجهاز الآخر يطلبه ثم ينزله تلقائياً عند اكتمال الاستقبال.
+        function downloadReceivedFile(fileId) {
+            const blob = fileBlobs.get(fileId);
+            const fileMeta = filesList.find(f => f.id === fileId);
+
+            if (!fileMeta) {
+                showToast('بيانات الملف غير موجودة!', 'error');
+                return;
+            }
+
+            if (blob) {
+                downloadBlobToDevice(fileMeta, blob);
+                return;
+            }
+
+            requestFileFromPeers(fileId, true);
         }
 
         // Preview file content in modal
@@ -1000,21 +1049,21 @@
             if (fileMeta.category === 'images') {
                 body.innerHTML = `<img src="${fileUrl}" class="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl">`;
             } else if (fileMeta.type.includes('pdf')) {
-                body.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[80vh] rounded-2xl border-0 shadow-lg"></iframe>`;
+                body.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[80vh] rounded-2xl border-0"></iframe>`;
             } else if (fileMeta.type.startsWith('audio/')) {
                 body.innerHTML = `
-                <div class="text-center space-y-4 p-8 glass-card rounded-3xl max-w-md w-full bg-white shadow-xl">
-                    <i class="fa-solid fa-music text-5xl text-brand-600 animate-bounce"></i>
+                <div class="text-center space-y-4 p-8 glass-card rounded-3xl max-w-md w-full">
+                    <i class="fa-solid fa-music text-5xl text-brand-500 animate-bounce"></i>
                     <audio controls src="${fileUrl}" class="w-full mt-4"></audio>
                 </div>`;
             } else if (fileMeta.type.startsWith('video/')) {
-                body.innerHTML = `<video controls src="${fileUrl}" class="max-h-[80vh] w-full rounded-2xl shadow-xl"></video>`;
+                body.innerHTML = `<video controls src="${fileUrl}" class="max-h-[80vh] w-full rounded-2xl"></video>`;
             } else {
                 body.innerHTML = `
-                <div class="text-center space-y-4 p-8 glass-card rounded-3xl bg-white shadow-xl">
-                    <i class="fa-solid fa-file-lines text-5xl text-amber-500"></i>
-                    <p class="text-sm text-slate-600">لا تتوفر معاينة مباشرة لهذا النوع من الملفات.</p>
-                    <button onclick="downloadFile('${fileId}')" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md">تنزيل الملف على الجهاز</button>
+                <div class="text-center space-y-4 p-8 glass-card rounded-3xl">
+                    <i class="fa-solid fa-file-lines text-5xl text-amber-400"></i>
+                    <p class="text-sm text-slate-300">لا تتوفر معاينة مباشرة لهذا النوع من الملفات.</p>
+                    <button onclick="downloadFile('${fileId}')" class="px-6 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs">تحميل الملف</button>
                 </div>`;
             }
 
@@ -1025,13 +1074,22 @@
             document.getElementById('previewModal').classList.add('hidden');
         }
 
-        // Trigger file download to local filesystem
+        // Trigger file download
         function downloadFile(fileId) {
             const blob = fileBlobs.get(fileId);
             const fileMeta = filesList.find(f => f.id === fileId);
 
             if (!blob || !fileMeta) {
-                showToast('الملف غير متوفر للتحميل حالياً!', 'error');
+                showToast('الملف غير موجود محلياً. استخدم زر تنزيل على الجهاز لاستلامه أولاً.', 'error');
+                return;
+            }
+
+            downloadBlobToDevice(fileMeta, blob);
+        }
+
+        function downloadBlobToDevice(fileMeta, blob) {
+            if (!blob || !fileMeta) {
+                showToast('الملف غير متوفر للتحميل!', 'error');
                 return;
             }
 
@@ -1039,10 +1097,13 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = fileMeta.name;
+            a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+
+            // تأخير إلغاء الرابط قليلاً لزيادة الاعتمادية مع الفيديوهات والملفات الكبيرة.
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
             showToast(`جاري تنزيل: ${fileMeta.name}`, 'success');
         }
 
@@ -1071,6 +1132,7 @@
             showToast('تم إفراغ كافة الملفات', 'info');
         }
 
+
         function updateRoomPinUI(pin) {
             document.getElementById('roomPinDisplay').innerText = pin;
             generateQRCode(pin);
@@ -1082,9 +1144,9 @@
             
             statusText.innerText = text;
             if (color === 'emerald') {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
             } else if (color === 'amber') {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
             } else {
                 dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
             }
@@ -1183,12 +1245,12 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             
-            const bgClass = type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
-                            type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' :
-                            'bg-white border-slate-200 text-slate-800';
+            const bgClass = type === 'success' ? 'bg-emerald-950/90 border-emerald-800 text-emerald-200' :
+                            type === 'error' ? 'bg-rose-950/90 border-rose-800 text-rose-200' :
+                            'bg-slate-900/90 border-slate-700 text-slate-200';
 
-            const icon = type === 'success' ? 'fa-circle-check text-emerald-600' :
-                         type === 'error' ? 'fa-circle-xmark text-rose-600' : 'fa-circle-info text-cyan-600';
+            const icon = type === 'success' ? 'fa-circle-check text-emerald-400' :
+                         type === 'error' ? 'fa-circle-xmark text-rose-400' : 'fa-circle-info text-cyan-400';
 
             toast.className = `glass-card p-3 px-4 rounded-2xl border ${bgClass} text-xs font-bold shadow-xl flex items-center space-x-2 space-x-reverse transition-all duration-300 pointer-events-auto transform translate-y-2 opacity-0`;
             toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
