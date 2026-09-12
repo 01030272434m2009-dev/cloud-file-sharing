@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز مشاركة الملفات والكتب | Cloud Vault</title>
+    <title>سحابة المشاركة المباشرة السريعة | Cloud Vault P2P</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,13 +14,19 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
                             400: '#38bdf8',
                             500: '#0ea5e9',
                             600: '#0284c7',
                             700: '#0369a1',
                             900: '#0c4a6e',
+                        },
+                        neon: {
+                            cyan: '#06b6d4',
+                            purple: '#a855f7',
+                            pink: '#ec4899',
+                            emerald: '#10b981'
                         }
                     },
                     fontFamily: {
@@ -31,40 +37,58 @@
         }
     </script>
 
-    <!-- Google Fonts & Font Awesome Icons -->
+    <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- PeerJS WebRTC Direct P2P Engine -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: #0b0f19;
+            background: #070a12;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
             color: #f1f5f9;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Glassmorphism Styles */
+        /* Modern Glassmorphism Styling */
         .glass-panel {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(30, 41, 59, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(14, 165, 233, 0.3);
-            box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.3);
+        }
+
+        /* Pulse and Glow Effects */
+        .glow-brand {
+            box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.5);
+        }
+
+        .glow-neon {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.5);
         }
 
         /* Custom Scrollbar */
@@ -73,10 +97,10 @@
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #090d16;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #1e293b;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
@@ -90,83 +114,100 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
+    <!-- Header Navigation -->
     <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             
             <!-- App Logo & Title -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
-                    <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-neon-purple flex items-center justify-center text-white glow-brand flex-shrink-0">
+                    <i class="fa-solid fa-wifi text-xl animate-pulse"></i>
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
-                        <span>سحابة المشاركة السريعة</span>
-                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">v2.5</span>
+                        <span class="bg-gradient-to-r from-brand-400 via-neon-cyan to-neon-purple bg-clip-text text-transparent">سحابة المشاركة الفورية</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">P2P v4.0</span>
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">مزامنة حية للكتب والملفات والصور بين جميع الأجهزة</p>
+                    <p class="text-xs text-slate-400 hidden sm:block">نقل وتزامن فوري للملفات والكتب بين الأجهزة مباشرة</p>
                 </div>
             </div>
 
             <!-- Action Controls & Room Code Badge -->
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Room Code & Join Button -->
-                <div class="flex items-center gap-1.5 bg-slate-900/90 border border-brand-500/30 px-3 py-1.5 rounded-xl text-xs shadow-inner">
-                    <span class="text-slate-400 font-medium hidden sm:inline">كود الغرفة:</span>
-                    <span id="roomCodeDisplay" class="font-mono font-black text-brand-400 tracking-wider text-sm">----</span>
-                    <button id="openJoinModalBtn" class="mr-1 text-slate-400 hover:text-white p-1 transition-colors" title="إدخال كود جهاز آخر للربط">
-                        <i class="fa-solid fa-key text-xs text-amber-400"></i>
+                <div class="flex items-center gap-2 bg-slate-900/90 border border-brand-500/30 px-3.5 py-1.5 rounded-2xl text-xs shadow-inner">
+                    <span class="text-slate-400 font-medium hidden sm:inline">رمز الغرفة:</span>
+                    <span id="roomCodeDisplay" class="font-mono font-black text-brand-400 tracking-widest text-base">----</span>
+                    <button id="openJoinModalBtn" class="mr-1 text-amber-400 hover:text-amber-300 p-1 transition-transform hover:scale-110" title="إدخال رمز جهاز آخر للربط المباشر">
+                        <i class="fa-solid fa-key text-xs"></i>
                     </button>
                 </div>
 
-                <!-- Live Connected Devices Counter -->
-                <div id="syncBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="connectedCountText">1 جهاز متصل</span>
+                <!-- Live Connection Radar Counter -->
+                <div id="connectionStatusBadge" class="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 transition-all">
+                    <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                    <span id="connectedCountText">جاري الاتصال...</span>
                 </div>
 
                 <!-- Share QR / Link Modal Button -->
-                <button id="shareHubBtn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700" title="مشاركة رابط المنصة والكود">
-                    <i class="fa-solid fa-qrcode text-base"></i>
+                <button id="shareHubBtn" class="p-2.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700/80 hover:border-brand-500/50" title="عرض رمز QR للغرفة">
+                    <i class="fa-solid fa-qrcode text-base text-brand-400"></i>
                 </button>
 
                 <!-- Upload File Trigger Button -->
-                <button id="openUploadBtn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-brand-600/25 transition-all text-xs sm:text-sm">
-                    <i class="fa-solid fa-plus text-sm"></i>
-                    <span class="hidden sm:inline">رفع ملف جديد</span>
-                    <span class="sm:hidden">رفع</span>
+                <button id="openUploadBtn" class="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-neon-purple hover:opacity-95 text-white font-bold shadow-lg glow-brand transition-all text-xs sm:text-sm">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                    <span class="hidden sm:inline">مشاركة ملف جديد</span>
+                    <span class="sm:hidden">مشاركة</span>
                 </button>
             </div>
         </div>
     </header>
 
+    <!-- Main Workspace Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
 
-        <!-- Search & Filter Controls -->
+        <!-- Search, Sorting & Filter Controls -->
         <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
             <!-- Search Bar -->
             <div class="relative w-full md:w-96">
                 <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" placeholder="ابحث باسم الكتاب، الصورة، أو الملف..." class="w-full pr-10 pl-4 py-2.5 bg-slate-900/80 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                <input type="text" id="searchInput" placeholder="ابحث باسم الكتاب، الصورة، أو الملف..." class="w-full pr-10 pl-4 py-2.5 bg-slate-900/90 border border-slate-800 rounded-2xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all shadow-inner">
             </div>
 
-            <!-- Categories & View Toggle -->
-            <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-3">
-                <div class="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 overflow-x-auto max-w-full text-xs">
-                    <button data-category="all" class="category-btn active px-3 py-1.5 rounded-lg bg-brand-600 text-white font-medium transition-all">الكل</button>
-                    <button data-category="books" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">كتب ومستندات</button>
-                    <button data-category="images" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">صور</button>
-                    <button data-category="media" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">وسائط</button>
-                    <button data-category="other" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">أخرى</button>
+            <!-- Categories, Sorting & View Toggle -->
+            <div class="flex flex-wrap items-center justify-between md:justify-end w-full md:w-auto gap-3">
+                <!-- Categories -->
+                <div class="flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full text-xs">
+                    <button data-category="all" class="category-btn active px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold transition-all shadow-md">الكل</button>
+                    <button data-category="books" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">كتب ومستندات</button>
+                    <button data-category="images" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">صور</button>
+                    <button data-category="media" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">وسائط</button>
+                    <button data-category="other" class="category-btn px-3.5 py-1.5 rounded-xl text-slate-400 hover:text-white font-medium transition-all">أخرى</button>
                 </div>
 
-                <div class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs">
-                    <button id="viewGridBtn" class="p-2 rounded-lg bg-slate-800 text-brand-400 transition-all" title="عرض شبكي">
+                <!-- Sort Control -->
+                <select id="sortSelect" class="bg-slate-900/90 text-xs text-slate-300 border border-slate-800 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-brand-500">
+                    <option value="newest">الأحدث أولاً</option>
+                    <option value="oldest">الأقدم أولاً</option>
+                    <option value="name">حسب الاسم</option>
+                    <option value="size">حسب الحجم</option>
+                </select>
+
+                <!-- View Layout Toggle -->
+                <div class="flex items-center bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 text-xs">
+                    <button id="viewGridBtn" class="p-2 rounded-xl bg-slate-800 text-brand-400 font-bold transition-all" title="عرض شبكي">
                         <i class="fa-solid fa-border-all"></i>
                     </button>
-                    <button id="viewListBtn" class="p-2 rounded-lg text-slate-400 hover:text-white transition-all" title="عرض القائمة">
+                    <button id="viewListBtn" class="p-2 rounded-xl text-slate-400 hover:text-white transition-all" title="عرض القائمة">
                         <i class="fa-solid fa-list"></i>
                     </button>
                 </div>
+
+                <!-- Clear Room Files Button -->
+                <button id="clearRoomBtn" class="p-2.5 rounded-2xl bg-slate-900/90 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-800 transition-all" title="مسح كافة ملفات هذه الغرفة">
+                    <i class="fa-solid fa-trash-arrow-up"></i>
+                </button>
             </div>
         </div>
 
@@ -177,89 +218,89 @@
 
         <!-- Empty State View -->
         <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center space-y-4">
-            <div class="w-20 h-20 rounded-3xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center text-slate-500 text-3xl">
-                <i class="fa-solid fa-folder-open"></i>
+            <div class="w-24 h-24 rounded-3xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-slate-600 text-4xl shadow-2xl relative">
+                <i class="fa-solid fa-folder-open text-brand-500/50"></i>
+                <span class="w-3 h-3 rounded-full bg-brand-400 absolute top-4 right-4 animate-ping"></span>
             </div>
             <div class="space-y-1">
-                <h3 class="text-base font-bold text-slate-300">لا توجد ملفات مرفوعة حالياً</h3>
-                <p class="text-xs text-slate-500 max-w-sm">قم برفع كُتب، صور، أو مستندات ليتم مشاركتها فوراً مع باقي الأجهزة المتصلة على نفس الكود.</p>
+                <h3 class="text-base font-bold text-slate-200">لا توجد ملفات أو كتب مشاركة في هذه الغرفة</h3>
+                <p class="text-xs text-slate-400 max-w-sm mx-auto">ارفع كتاباً أو صورة من هذا الجهاز، أو قم بربط جهازك الآخر عبر كود الغرفة المكون من 4 أرقام لتظهر الملفات فورياً!</p>
             </div>
-            <button id="emptyUploadBtn" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-all flex items-center gap-2">
+            <button id="emptyUploadBtn" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs transition-all flex items-center gap-2 shadow-lg glow-brand">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <span>رفع أول ملف الآن</span>
             </button>
         </div>
     </main>
 
-
     <!-- Upload Modal -->
     <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-slate-700 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-file-arrow-up text-brand-400"></i>
-                    <span>رفع ملف أو كتاب جديد</span>
+                    <span>مشاركة ملف أو كتاب جديد</span>
                 </h3>
-                <button id="closeUploadModalBtn" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                <button id="closeUploadModalBtn" class="text-slate-400 hover:text-white p-1 rounded-xl">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
             <!-- Drag and Drop Dropzone -->
-            <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 text-center space-y-3 cursor-pointer bg-slate-900/40 hover:bg-slate-900/80 transition-all">
+            <div id="dropzone" class="border-2 border-dashed border-slate-700/80 hover:border-brand-500 rounded-3xl p-8 text-center space-y-3 cursor-pointer bg-slate-950/40 hover:bg-slate-900/80 transition-all">
                 <input type="file" id="fileInput" class="hidden" multiple>
-                <div class="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-2xl mx-auto">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                <div class="w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
                 </div>
                 <div>
                     <p class="text-sm font-bold text-slate-200">اضغط هنا لاختيار الملفات أو اسحبها إلى هنا</p>
-                    <p class="text-xs text-slate-500 mt-1">يدعم الكتب (PDF, EPUB)، الصور، الصوتيات والملفات المضغوطة</p>
+                    <p class="text-xs text-slate-400 mt-1">يدعم كافة الملفات: الكتب (PDF, EPUB)، الصور، الصوتيات، الفيديوهات والملفات النصية</p>
                 </div>
             </div>
 
             <!-- Selected File Info & Progress -->
-            <div id="uploadProgressContainer" class="hidden space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+            <div id="uploadProgressContainer" class="hidden space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
                 <div class="flex items-center justify-between text-xs">
                     <span id="uploadFileName" class="font-bold text-slate-200 truncate max-w-[200px]">filename.pdf</span>
                     <span id="uploadFileSize" class="text-slate-400">0 MB</span>
                 </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="progressBar" class="bg-gradient-to-r from-brand-500 to-indigo-500 h-full w-0 transition-all duration-200"></div>
+                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-gradient-to-r from-brand-400 via-neon-cyan to-neon-purple h-full w-0 transition-all duration-200"></div>
                 </div>
-                <p id="uploadStatusText" class="text-[11px] text-brand-400 font-medium text-center">جاري تجهيز الملف وحفظه...</p>
+                <p id="uploadStatusText" class="text-[11px] text-brand-400 font-bold text-center">جاري معالجة ونقل الملف بين الأجهزة...</p>
             </div>
 
             <div class="flex justify-end gap-2 pt-2">
-                <button id="cancelUploadBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all">إلغاء</button>
+                <button id="cancelUploadBtn" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all">إلغاء</button>
             </div>
         </div>
     </div>
 
     <!-- Share Room & QR Modal -->
     <div id="shareHubModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-slate-700 shadow-2xl space-y-5 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-xl mx-auto">
+        <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-slate-700 shadow-2xl space-y-5 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-2xl mx-auto shadow-inner">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <div>
-                <h3 class="text-base font-bold text-white">افتح الصفحة على أي جهاز آخر</h3>
-                <p class="text-xs text-slate-400 mt-1">كود الغرفة المباشر الخاص بك هو: <span id="shareModalRoomCode" class="font-bold font-mono text-brand-400 text-sm"></span></p>
+                <h3 class="text-base font-bold text-white">افتح الصفحة على أي جهاز آخر للاقتران المباشر</h3>
+                <p class="text-xs text-slate-400 mt-1">رمز الغرفة المباشر الخاص بك: <span id="shareModalRoomCode" class="font-bold font-mono text-brand-400 text-lg tracking-widest"></span></p>
             </div>
 
-            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-2">
+            <div class="p-3 bg-slate-950/90 rounded-2xl border border-slate-800 flex items-center gap-2">
                 <input type="text" id="shareUrlInput" readonly class="bg-transparent text-xs text-slate-300 w-full focus:outline-none text-left font-mono">
-                <button id="copyShareUrlBtn" class="px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white flex-shrink-0 transition-all">
+                <button id="copyShareUrlBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-xs font-bold text-white flex-shrink-0 transition-all shadow-md">
                     نسخ
                 </button>
             </div>
 
-            <div class="flex justify-center p-3 bg-white rounded-2xl shadow-lg w-fit mx-auto">
+            <div class="flex justify-center p-4 bg-white rounded-2xl shadow-xl w-fit mx-auto">
                 <div id="qrCodeContainer">
                     <!-- QR Code generated dynamically -->
                 </div>
             </div>
 
-            <button id="closeShareHubBtn" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">
+            <button id="closeShareHubBtn" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">
                 إغلاق
             </button>
         </div>
@@ -267,49 +308,54 @@
 
     <!-- Join Room PIN Modal -->
     <div id="joinRoomModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-sm p-6 rounded-2xl border border-slate-700 shadow-2xl text-center space-y-4">
-            <div class="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-xl mx-auto">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl text-center space-y-5">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl mx-auto shadow-inner">
                 <i class="fa-solid fa-key"></i>
             </div>
             <div>
-                <h3 class="text-base font-bold text-white">الربط بجهاز آخر</h3>
-                <p class="text-xs text-slate-400 mt-1">أدخل الكود المكون من 4 أرقام الظاهر على الجهاز الرئيسي</p>
+                <h3 class="text-base font-bold text-white">الاقتران بجهاز آخر</h3>
+                <p class="text-xs text-slate-400 mt-1">أدخل رمز الغرفة المكون من 4 أرقام الظاهر على الجهاز الأول</p>
             </div>
 
             <div class="flex justify-center dir-ltr">
-                <input type="text" maxlength="4" id="pinCodeInput" placeholder="1234" class="w-44 text-center text-3xl font-mono font-black tracking-widest px-3 py-2 bg-slate-900 border border-brand-500/50 rounded-xl text-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <input type="text" maxlength="4" id="pinCodeInput" placeholder="1234" class="w-48 text-center text-3xl font-mono font-black tracking-widest px-4 py-2.5 bg-slate-950 border border-brand-500/50 rounded-2xl text-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-inner">
             </div>
 
             <div class="flex gap-2">
-                <button id="confirmJoinRoomBtn" class="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white transition-all">
-                    ربط الآن
+                <button id="confirmJoinRoomBtn" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-xs font-bold text-white transition-all shadow-md">
+                    ربط الجهازين الآن
                 </button>
-                <button id="generateNewRoomBtn" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all" title="توليد كود جديد لجهازك">
-                    كود جديد
+                <button id="generateNewRoomBtn" class="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all" title="توليد كود جديد لجهازك">
+                    رمز جديد
                 </button>
-                <button id="closeJoinRoomBtn" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-400 transition-all">
+                <button id="closeJoinRoomBtn" class="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-400 transition-all">
                     إلغاء
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Preview Modal -->
-    <div id="previewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-4xl max-h-[90vh] p-6 rounded-2xl border border-slate-700 shadow-2xl flex flex-col space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 id="previewTitle" class="text-base font-bold text-white truncate max-w-md">معاينة الملف</h3>
-                <button id="closePreviewBtn" class="text-slate-400 hover:text-white p-1 rounded-lg">
+    <!-- Enhanced Preview Modal -->
+    <div id="previewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-6">
+        <div class="glass-panel w-full max-w-5xl h-[85vh] p-4 sm:p-6 rounded-3xl border border-slate-700 shadow-2xl flex flex-col space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-shrink-0">
+                <div class="flex items-center gap-2 truncate pr-2">
+                    <span id="previewTypeIcon" class="text-brand-400 text-base"></span>
+                    <h3 id="previewTitle" class="text-sm sm:text-base font-bold text-white truncate max-w-md">معاينة الملف</h3>
+                </div>
+                <button id="closePreviewBtn" class="text-slate-400 hover:text-white p-1 rounded-xl">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <div id="previewBody" class="flex-1 flex items-center justify-center overflow-auto min-h-[300px]">
+            <!-- Scrollable Preview Area -->
+            <div id="previewBody" class="flex-1 flex items-center justify-center overflow-auto min-h-[300px] bg-slate-950/80 rounded-2xl border border-slate-800/80 p-2">
                 <!-- Preview content rendered dynamically -->
             </div>
 
-            <div class="flex justify-end gap-3 border-t border-slate-800 pt-3">
-                <a id="downloadPreviewBtn" download class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-2 transition-all">
+            <div class="flex justify-between items-center border-t border-slate-800/80 pt-3 flex-shrink-0">
+                <div id="previewMetaInfo" class="text-xs text-slate-400"></div>
+                <a id="downloadPreviewBtn" download class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs flex items-center gap-2 transition-all shadow-md">
                     <i class="fa-solid fa-download"></i>
                     <span>تنزيل الملف</span>
                 </a>
@@ -317,42 +363,41 @@
         </div>
     </div>
 
+    <!-- Custom Confirm Dialog Modal -->
+    <div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl mx-auto shadow-inner">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="confirmModalTitle" class="text-base font-bold text-white">تأكيد الإجراء</h3>
+            <p id="confirmModalMessage" class="text-xs text-slate-300">هل أنت تأكد من رغبتك في متابعة هذا الإجراء؟</p>
+            <div class="flex gap-2 pt-2">
+                <button id="confirmYesBtn" class="flex-1 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition-all">تأكيد الحذف</button>
+                <button id="confirmNoBtn" class="flex-1 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast Container -->
-    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2"></div>
+    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Footer -->
     <footer class="border-t border-slate-800/60 py-4 px-4 text-center text-xs text-slate-500">
-        <p>منصة نقل ومشاركة الملفات والكتب بين الأجهزة v2.5 | جاهزة للرفع على GitHub Pages</p>
+        <p>منصة سحابة المشاركة المباشرة v4.0 | نقل الأجهزة عبر WebRTC P2P فائقة السرعة</p>
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'cloud-vault-app';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyDemoKeyOnlyForAppFallback0000",
-                authDomain: "demo-app.firebaseapp.com",
-                projectId: "demo-app",
-                storageBucket: "demo-app.appspot.com",
-                messagingSenderId: "1234567890",
-                appId: "1:1234567890:web:demo"
-            };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
+    <!-- Application JavaScript Engine -->
+    <script>
         let filesData = [];
         let currentCategory = 'all';
         let viewMode = 'grid';
-        let currentUser = null;
-        let filesUnsubscribe = null;
-        let presenceUnsubscribe = null;
-        let presenceInterval = null;
+        let sortBy = 'newest';
+        
+        let peer = null;
+        let connections = []; // Array of active P2P DataConnections
+        let isHost = false;
+        let broadcastChannel = null;
+        let isFallbackMode = false;
 
         function getInitialRoomCode() {
             const hash = window.location.hash.replace('#', '').trim();
@@ -375,21 +420,13 @@
             localStorage.setItem('cloud_vault_room_code', currentRoomCode);
         }
 
-        const DB_NAME = 'CloudVaultDB';
-        const DB_VERSION = 1;
-
-        function openIDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                request.onupgradeneeded = (e) => {
-                    const idb = e.target.result;
-                    if (!idb.objectStoreNames.contains('files')) {
-                        idb.createObjectStore('files', { keyPath: 'id' });
-                    }
-                };
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
+        /* Catch environment security errors for WebSockets in restricted iframes */
+        window.addEventListener('error', (e) => {
+            if (e.message && (e.message.includes('SecurityError') || e.message.includes('WebSocket'))) {
+                e.preventDefault();
+                enableFallbackMode(currentRoomCode);
+            }
+        });
         }
 
         async function saveFileToIDB(fileObj) {
@@ -398,7 +435,7 @@
                 const tx = idb.transaction('files', 'readwrite');
                 tx.objectStore('files').put(fileObj);
             } catch(e) {
-                console.warn("IndexedDB Save warning:", e);
+                console.warn("IndexedDB Save Warning:", e);
             }
         }
 
@@ -416,127 +453,448 @@
             }
         }
 
-        async function initAuth() {
+        async function getAllFilesFromIDB() {
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
-                    currentUser = userCredential.user;
-                } else {
-                    const userCredential = await signInAnonymously(auth);
-                    currentUser = userCredential.user;
-                }
-                updateRoomUI();
-                connectToRoom(currentRoomCode);
-            } catch (err) {
-                console.warn("Auth note:", err);
-                setupLocalFallbackMode();
+                const idb = await openIDB();
+                return new Promise((resolve) => {
+                    const tx = idb.transaction('files', 'readonly');
+                    const req = tx.objectStore('files').getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => resolve([]);
+                });
+            } catch(e) {
+                return [];
             }
         }
 
-        function connectToRoom(code) {
-            currentRoomCode = code;
-            updateRoomUI();
-
-            if (filesUnsubscribe) filesUnsubscribe();
-            if (presenceUnsubscribe) presenceUnsubscribe();
-            if (presenceInterval) clearInterval(presenceInterval);
-
-            subscribeToFiles();
-            startPresenceHeartbeat();
-            subscribeToPresence();
+        async function deleteFileFromIDB(id) {
+            try {
+                const idb = await openIDB();
+                const tx = idb.transaction('files', 'readwrite');
+                tx.objectStore('files').delete(id);
+            } catch(e) {
+                console.warn("IndexedDB Delete Warning:", e);
+            }
         }
 
-        function subscribeToFiles() {
-            if (!currentUser) return;
+        async function clearIDB() {
+            try {
+                const idb = await openIDB();
+                const tx = idb.transaction('files', 'readwrite');
+                tx.objectStore('files').clear();
+            } catch(e){}
+        }
 
-            const collectionName = `room_${currentRoomCode}_files`;
-            const filesCollection = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
+        /* Image Compression Helper */
+        async function compressImageIfNeeded(dataUrl, maxDimension = 1200, quality = 0.75) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = dataUrl;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
 
-            filesUnsubscribe = onSnapshot(filesCollection, (snapshot) => {
-                filesData = [];
-                snapshot.forEach(docSnap => {
-                    filesData.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderFiles();
-            }, (error) => {
-                console.warn("Firestore sync warning, engaging local storage:", error);
-                setupLocalFallbackMode();
+                    if (width <= maxDimension && height <= maxDimension && dataUrl.length < 500000) {
+                        return resolve(dataUrl);
+                    }
+
+                    if (width > height) {
+                        if (width > maxDimension) {
+                            height = Math.round((height * maxDimension) / width);
+                            width = maxDimension;
+                        }
+                    } else {
+                        if (height > maxDimension) {
+                            width = Math.round((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressed = canvas.toDataURL('image/jpeg', quality);
+                    resolve(compressed);
+                };
+                img.onerror = () => resolve(dataUrl);
             });
         }
 
-        function startPresenceHeartbeat() {
-            if (!currentUser) return;
-            const presenceDocRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${currentRoomCode}_presence`, currentUser.uid);
-            
-            const sendHeartbeat = () => {
-                setDoc(presenceDocRef, {
-                    lastSeen: Date.now(),
-                    device: navigator.userAgent.includes('Mobile') ? 'هاتف' : 'كمبيوتر'
-                }, { merge: true }).catch(() => {});
-            };
+        function updateConnectionUI(status, count = 1) {
+            const badge = document.getElementById('connectionStatusBadge');
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('connectedCountText');
 
-            sendHeartbeat();
-            presenceInterval = setInterval(sendHeartbeat, 10000);
+            if (status === 'connected') {
+                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+                text.innerText = `${count} ${count === 1 ? 'جهاز متصل' : 'أجهزة متصلة'}`;
+            } else if (status === 'local_fallback') {
+                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse";
+                text.innerText = "اتصال محلي (BroadcastChannel)";
+            } else if (status === 'connecting') {
+                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping";
+                text.innerText = "جاري الاتصال...";
+            } else {
+                badge.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-rose-400";
+                text.innerText = "غير متصل (اضغط للتجديد)";
+            }
         }
 
-        function subscribeToPresence() {
-            if (!currentUser) return;
+        function initBroadcastChannel(roomCode) {
+            if (broadcastChannel) {
+                try { broadcastChannel.close(); } catch(e){}
+            }
+            if ('BroadcastChannel' in window) {
+                broadcastChannel = new BroadcastChannel(`cloud_vault_room_${roomCode}`);
+                broadcastChannel.onmessage = (event) => {
+                    handleIncomingMessage(event.data, null);
+                };
+            }
+        }
 
-            const presenceCollection = collection(db, 'artifacts', appId, 'public', 'data', `room_${currentRoomCode}_presence`);
+        function initPeerConnection(roomCode) {
+            currentRoomCode = roomCode;
+            updateRoomUI();
+            updateConnectionUI('connecting');
+            initBroadcastChannel(roomCode);
+
+            // Clean previous connections
+            if (peer) {
+                try { peer.destroy(); } catch(e){}
+            }
+            connections = [];
+            isFallbackMode = false;
+
+            // Attempt to register as Host for this room
+            const hostPeerId = `cvault4_room_${roomCode}_host`;
             
-            presenceUnsubscribe = onSnapshot(presenceCollection, (snapshot) => {
-                const now = Date.now();
-                let activeCount = 0;
-
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if (data && data.lastSeen && (now - data.lastSeen < 25000)) {
-                        activeCount++;
+            try {
+                peer = new Peer(hostPeerId, { 
+                    debug: 0,
+                    config: {
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' }
+                        ]
                     }
                 });
 
-                const countDisplay = Math.max(1, activeCount);
-                document.getElementById('connectedCountText').innerText = `${countDisplay} ${countDisplay === 1 ? 'جهاز متصل' : 'أجهزة متصلة'}`;
-            }, () => {
-                document.getElementById('connectedCountText').innerText = '1 جهاز متصل';
+                peer.on('open', (id) => {
+                    isHost = true;
+                    updateConnectionUI('connected', 1);
+                    showToast(`تم إنشاء الغرفة المباشرة (${roomCode}) كجهاز رئيسي`);
+                    loadLocalFilesAndRender();
+                });
+
+                peer.on('connection', (conn) => {
+                    // Incoming client connection to Host
+                    connections.push(conn);
+                    setupConnectionListeners(conn);
+
+                    conn.on('open', () => {
+                        updateConnectionUI('connected', connections.length + 1);
+                        showToast("انضم جهاز جديد للغرفة المباشرة!");
+                        
+                        // Host sends entire file list to new client
+                        conn.send({
+                            type: 'SYNC_FILES',
+                            files: filesData
+                        });
+
+                        // Broadcast count to all clients
+                        broadcastToPeers({
+                            type: 'MEMBER_COUNT',
+                            count: connections.length + 1
+                        });
+                    });
+                });
+
+                peer.on('error', (err) => {
+                    if (err.type === 'unavailable-id') {
+                        // Host ID taken! Connect as Client
+                        isHost = false;
+                        connectAsClient(roomCode);
+                    } else {
+                        console.warn("PeerJS connection note:", err);
+                        enableFallbackMode(roomCode);
+                    }
+                });
+            } catch (err) {
+                console.warn("WebSocket blocked by environment:", err);
+                enableFallbackMode(roomCode);
+            }
+        }
+
+        function enableFallbackMode(roomCode) {
+            if (isFallbackMode) return;
+            isFallbackMode = true;
+            updateConnectionUI('local_fallback');
+            showToast("تم التحويل الذكي لنظام المزامنة المحلية (BroadcastChannel)");
+            loadLocalFilesAndRender();
+        }
+
+        function connectAsClient(roomCode) {
+            try {
+                const clientPeerId = `cvault4_room_${roomCode}_client_${Math.floor(Math.random()*10000)}`;
+                peer = new Peer(clientPeerId, { debug: 0 });
+
+                peer.on('open', () => {
+                    const hostPeerId = `cvault4_room_${roomCode}_host`;
+                    const conn = peer.connect(hostPeerId);
+
+                    connections = [conn];
+                    setupConnectionListeners(conn);
+
+                    conn.on('open', () => {
+                        updateConnectionUI('connected', 2);
+                        showToast(`تم الربط المباشر مع الغرفة (${roomCode})`);
+                        // Request files sync from Host
+                        conn.send({ type: 'REQUEST_SYNC' });
+                    });
+                });
+
+                peer.on('error', (err) => {
+                    console.warn("Client Connection error:", err);
+                    enableFallbackMode(roomCode);
+                });
+            } catch(e) {
+                enableFallbackMode(roomCode);
+            }
+        }
+
+        function setupConnectionListeners(conn) {
+            conn.on('data', (data) => {
+                handleIncomingMessage(data, conn);
+            });
+
+            conn.on('close', () => {
+                connections = connections.filter(c => c !== conn);
+                updateConnectionUI('connected', connections.length + 1);
+                showToast("غادر أحد الأجهزة المتصلة", "info");
+            });
+
+            conn.on('error', () => {
+                connections = connections.filter(c => c !== conn);
             });
         }
 
-        function setupLocalFallbackMode() {
-            const saved = localStorage.getItem(`cloud_vault_files_${currentRoomCode}`);
-            if (saved) {
-                try { filesData = JSON.parse(saved); } catch(e){ filesData = []; }
-            } else {
-                filesData = [];
+        function broadcastToPeers(message, excludeConn = null) {
+            // Direct P2P WebRTC Connections
+            connections.forEach(conn => {
+                if (conn !== excludeConn && conn.open) {
+                    try { conn.send(message); } catch(e){}
+                }
+            });
+
+            // Local Multi-Tab / Iframe BroadcastChannel fallback
+            if (broadcastChannel) {
+                try { broadcastChannel.postMessage(message); } catch(e){}
             }
-            renderFiles();
         }
 
-        function saveLocalFallback() {
-            localStorage.setItem(`cloud_vault_files_${currentRoomCode}`, JSON.stringify(filesData.map(f => ({
-                ...f,
-                dataUrl: f.dataUrl ? (f.dataUrl.length < 500000 ? f.dataUrl : '') : ''
-            }))));
+        function initPeerConnection(roomCode) {
+            currentRoomCode = roomCode;
+            updateRoomUI();
+            updateConnectionUI('connecting');
+
+            // Clean previous connections
+            if (peer) {
+                try { peer.destroy(); } catch(e){}
+            }
+            connections = [];
+
+            // Attempt to register as Host for this room
+            const hostPeerId = `cvault4_room_${roomCode}_host`;
+            
+            peer = new Peer(hostPeerId, { debug: 0 });
+
+            peer.on('open', (id) => {
+                isHost = true;
+                updateConnectionUI('connected', 1);
+                showToast(`تم إنشاء الغرفة المباشرة (${roomCode}) كجهاز رئيسي`);
+                loadLocalFilesAndRender();
+            });
+
+            peer.on('connection', (conn) => {
+                // Incoming client connection to Host
+                connections.push(conn);
+                setupConnectionListeners(conn);
+
+                conn.on('open', () => {
+                    updateConnectionUI('connected', connections.length + 1);
+                    showToast("انضم جهاز جديد للغرفة المباشرة!");
+                    
+                    // Host sends entire file list to new client
+                    conn.send({
+                        type: 'SYNC_FILES',
+                        files: filesData
+                    });
+
+                    // Broadcast count to all clients
+                    broadcastToPeers({
+                        type: 'MEMBER_COUNT',
+                        count: connections.length + 1
+                    });
+                });
+            });
+
+            peer.on('error', (err) => {
+                if (err.type === 'unavailable-id') {
+                    // Host ID taken! Connect as Client
+                    isHost = false;
+                    connectAsClient(roomCode);
+                } else {
+                    console.warn("PeerJS note:", err);
+                    updateConnectionUI('disconnected');
+                }
+            });
+        }
+
+        function connectAsClient(roomCode) {
+            const clientPeerId = `cvault4_room_${roomCode}_client_${Math.floor(Math.random()*10000)}`;
+            peer = new Peer(clientPeerId, { debug: 0 });
+
+            peer.on('open', () => {
+                const hostPeerId = `cvault4_room_${roomCode}_host`;
+                const conn = peer.connect(hostPeerId);
+
+                connections = [conn];
+                setupConnectionListeners(conn);
+
+                conn.on('open', () => {
+                    updateConnectionUI('connected', 2);
+                    showToast(`تم الربط المباشر مع الغرفة (${roomCode})`);
+                    // Request files sync from Host
+                    conn.send({ type: 'REQUEST_SYNC' });
+                });
+            });
+
+            peer.on('error', (err) => {
+                console.warn("Client Connection error:", err);
+                updateConnectionUI('disconnected');
+            });
+        }
+
+        function setupConnectionListeners(conn) {
+            conn.on('data', (data) => {
+                handleIncomingMessage(data, conn);
+            });
+
+            conn.on('close', () => {
+                connections = connections.filter(c => c !== conn);
+                updateConnectionUI('connected', connections.length + 1);
+                showToast("غادر أحد الأجهزة المتصلة", "info");
+            });
+
+            conn.on('error', () => {
+                connections = connections.filter(c => c !== conn);
+            });
+        }
+
+        function broadcastToPeers(message, excludeConn = null) {
+            connections.forEach(conn => {
+                if (conn !== excludeConn && conn.open) {
+                    try { conn.send(message); } catch(e){}
+                }
+            });
+        }
+
+        async function handleIncomingMessage(data, senderConn) {
+            if (!data || !data.type) return;
+
+            switch(data.type) {
+                case 'SYNC_FILES':
+                    if (data.files && Array.isArray(data.files)) {
+                        filesData = data.files;
+                        for (const file of filesData) {
+                            await saveFileToIDB(file);
+                        }
+                        renderFiles();
+                    }
+                    break;
+
+                case 'REQUEST_SYNC':
+                    if (isHost) {
+                        senderConn.send({ type: 'SYNC_FILES', files: filesData });
+                    }
+                    break;
+
+                case 'NEW_FILE':
+                    if (data.file) {
+                        filesData.unshift(data.file);
+                        await saveFileToIDB(data.file);
+                        renderFiles();
+                        showToast(`تم استلام ملف جديد: (${data.file.name})`);
+
+                        // If host, rebroadcast to all other connected clients
+                        if (isHost) {
+                            broadcastToPeers(data, senderConn);
+                        }
+                    }
+                    break;
+
+                case 'DELETE_FILE':
+                    if (data.id) {
+                        filesData = filesData.filter(f => f.id !== data.id);
+                        await deleteFileFromIDB(data.id);
+                        renderFiles();
+                        showToast("تم حذف ملف من الغرفة");
+
+                        if (isHost) {
+                            broadcastToPeers(data, senderConn);
+                        }
+                    }
+                    break;
+
+                case 'CLEAR_ROOM':
+                    filesData = [];
+                    await clearIDB();
+                    renderFiles();
+                    showToast("تم إفراغ محتويات الغرفة");
+
+                    if (isHost) {
+                        broadcastToPeers(data, senderConn);
+                    }
+                    break;
+
+                case 'MEMBER_COUNT':
+                    if (data.count) {
+                        updateConnectionUI('connected', data.count);
+                    }
+                    break;
+            }
+        }
+
+        async function loadLocalFilesAndRender() {
+            filesData = await getAllFilesFromIDB();
+            renderFiles();
         }
 
         function getCategoryFromFile(file) {
             const ext = file.name.split('.').pop().toLowerCase();
             const mime = file.type.toLowerCase();
 
-            if (['pdf', 'epub', 'mobi', 'doc', 'docx', 'txt', 'rtf'].includes(ext) || mime.includes('pdf') || mime.includes('document')) {
+            if (['pdf', 'epub', 'mobi', 'doc', 'docx', 'txt', 'rtf', 'md', 'json'].includes(ext) || mime.includes('pdf') || mime.includes('document') || mime.includes('text')) {
                 return 'books';
             }
-            if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext) || mime.includes('image')) {
+            if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext) || mime.includes('image')) {
                 return 'images';
             }
-            if (['mp3', 'wav', 'ogg', 'mp4', 'mkv', 'avi', 'mov'].includes(ext) || mime.includes('audio') || mime.includes('video')) {
+            if (['mp3', 'wav', 'ogg', 'mp4', 'mkv', 'avi', 'mov', 'webm', 'm4a'].includes(ext) || mime.includes('audio') || mime.includes('video')) {
                 return 'media';
             }
             return 'other';
         }
 
         function formatBytes(bytes) {
-            if (bytes === 0) return '0 B';
+            if (!bytes || bytes === 0) return '0 B';
             const k = 1024;
             const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -544,10 +902,23 @@
         }
 
         function getFileIconClass(category, ext) {
-            if (category === 'books') return { icon: 'fa-book-open', color: 'text-amber-400 bg-amber-500/10' };
+            if (category === 'books') {
+                if (ext === 'pdf') return { icon: 'fa-file-pdf', color: 'text-rose-400 bg-rose-500/10' };
+                return { icon: 'fa-book-open', color: 'text-amber-400 bg-amber-500/10' };
+            }
             if (category === 'images') return { icon: 'fa-file-image', color: 'text-emerald-400 bg-emerald-500/10' };
             if (category === 'media') return { icon: 'fa-file-audio', color: 'text-purple-400 bg-purple-500/10' };
             return { icon: 'fa-file-zipper', color: 'text-brand-400 bg-brand-500/10' };
+        }
+
+        function sortFilesArray(files) {
+            return files.sort((a, b) => {
+                if (sortBy === 'newest') return (b.timestamp || 0) - (a.timestamp || 0);
+                if (sortBy === 'oldest') return (a.timestamp || 0) - (b.timestamp || 0);
+                if (sortBy === 'name') return a.name.localeCompare(b.name, 'ar');
+                if (sortBy === 'size') return (b.size || 0) - (a.size || 0);
+                return 0;
+            });
         }
 
         function renderFiles() {
@@ -560,6 +931,8 @@
                 const matchesSearch = !searchQuery || file.name.toLowerCase().includes(searchQuery);
                 return matchesCategory && matchesSearch;
             });
+
+            filtered = sortFilesArray(filtered);
 
             if (filtered.length === 0) {
                 container.innerHTML = '';
@@ -578,20 +951,25 @@
                     const isImage = file.category === 'images' && file.dataUrl;
 
                     return `
-                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 group">
+                        <div class="glass-card rounded-3xl p-4 flex flex-col justify-between space-y-3 group relative overflow-hidden">
                             <div class="space-y-3">
                                 ${isImage ? `
-                                    <div class="h-36 w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+                                    <div class="h-36 w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 relative">
                                         <img src="${file.dataUrl}" alt="${file.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     </div>
                                 ` : `
-                                    <div class="h-28 w-full rounded-xl ${iconStyle.color} flex items-center justify-center text-3xl">
+                                    <div class="h-28 w-full rounded-2xl ${iconStyle.color} flex items-center justify-center text-3xl shadow-inner">
                                         <i class="fa-solid ${iconStyle.icon}"></i>
                                     </div>
                                 `}
 
                                 <div>
-                                    <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate" title="${file.name}">${file.name}</h4>
+                                    <div class="flex items-center justify-between gap-1">
+                                        <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate flex-1" title="${file.name}">${file.name}</h4>
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                            مباشر
+                                        </span>
+                                    </div>
                                     <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
                                         <span>${formatBytes(file.size)}</span>
                                         <span>•</span>
@@ -606,10 +984,10 @@
                                     <span>معاينة</span>
                                 </button>
                                 <div class="flex items-center gap-1">
-                                    <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors" title="تحميل">
+                                    <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white transition-colors" title="تحميل">
                                         <i class="fa-solid fa-download text-xs"></i>
                                     </button>
-                                    <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors" title="حذف">
+                                    <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors" title="حذف">
                                         <i class="fa-solid fa-trash-can text-xs"></i>
                                     </button>
                                 </div>
@@ -618,30 +996,35 @@
                     `;
                 }).join('');
             } else {
-                container.className = 'flex flex-col gap-2';
+                container.className = 'flex flex-col gap-2.5';
                 container.innerHTML = filtered.map(file => {
                     const iconStyle = getFileIconClass(file.category, file.ext);
 
                     return `
-                        <div class="glass-card rounded-xl p-3 flex items-center justify-between gap-3">
+                        <div class="glass-card rounded-2xl p-3.5 flex items-center justify-between gap-3">
                             <div class="flex items-center gap-3 truncate">
-                                <div class="w-10 h-10 rounded-lg ${iconStyle.color} flex items-center justify-center text-lg flex-shrink-0">
+                                <div class="w-10 h-10 rounded-xl ${iconStyle.color} flex items-center justify-center text-lg flex-shrink-0">
                                     <i class="fa-solid ${iconStyle.icon}"></i>
                                 </div>
                                 <div class="truncate">
-                                    <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate">${file.name}</h4>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate">${file.name}</h4>
+                                        <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                                            مباشر
+                                        </span>
+                                    </div>
                                     <p class="text-[11px] text-slate-400">${formatBytes(file.size)} • ${file.date || 'الآن'}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                <button onclick="window.previewFile('${file.id}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-brand-400 text-xs font-bold transition-all">
+                                <button onclick="window.previewFile('${file.id}')" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-400 text-xs font-bold transition-all">
                                     معاينة
                                 </button>
-                                <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-lg hover:bg-slate-800 text-slate-300 transition-colors">
+                                <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-xl hover:bg-slate-800 text-slate-300 transition-colors" title="تحميل">
                                     <i class="fa-solid fa-download text-xs"></i>
                                 </button>
-                                <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors">
+                                <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors" title="حذف">
                                     <i class="fa-solid fa-trash-can text-xs"></i>
                                 </button>
                             </div>
@@ -666,55 +1049,48 @@
                 const file = filesList[i];
                 fileNameEl.innerText = file.name;
                 fileSizeEl.innerText = formatBytes(file.size);
-                progressBar.style.width = '20%';
+                progressBar.style.width = '25%';
 
                 const category = getCategoryFromFile(file);
                 const reader = new FileReader();
 
                 await new Promise((resolve) => {
                     reader.onload = async (e) => {
-                        progressBar.style.width = '70%';
-                        const dataUrl = e.target.result;
+                        progressBar.style.width = '60%';
+                        let dataUrl = e.target.result;
 
+                        if (category === 'images') {
+                            dataUrl = await compressImageIfNeeded(dataUrl);
+                        }
+
+                        const timestamp = Date.now();
                         const newFileObj = {
+                            id: 'f_' + timestamp + '_' + Math.random().toString(36).substr(2, 5),
                             name: file.name,
                             size: file.size,
                             category: category,
                             ext: file.name.split('.').pop().toLowerCase(),
                             type: file.type,
+                            timestamp: timestamp,
                             date: new Date().toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
                             dataUrl: dataUrl
                         };
 
-                        const tempId = 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+                        // Store locally in IndexedDB
+                        await saveFileToIDB(newFileObj);
+                        filesData.unshift(newFileObj);
+                        renderFiles();
 
-                        await saveFileToIDB({ id: tempId, ...newFileObj });
-
-                        if (currentUser) {
-                            try {
-                                const collectionName = `room_${currentRoomCode}_files`;
-                                const filesCollection = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
-                                
-                                const cloudObj = { ...newFileObj };
-                                if (cloudObj.dataUrl && cloudObj.dataUrl.length > 800000 && category !== 'images') {
-                                    cloudObj.dataUrl = '';
-                                }
-                                await addDoc(filesCollection, cloudObj);
-                            } catch(err) {
-                                filesData.unshift({ id: tempId, ...newFileObj });
-                                saveLocalFallback();
-                                renderFiles();
-                            }
-                        } else {
-                            filesData.unshift({ id: tempId, ...newFileObj });
-                            saveLocalFallback();
-                            renderFiles();
-                        }
+                        // Broadcast file object to all connected devices via WebRTC
+                        broadcastToPeers({
+                            type: 'NEW_FILE',
+                            file: newFileObj
+                        });
 
                         progressBar.style.width = '100%';
-                        statusText.innerText = 'تم رفع الملف بنجاح!';
-                        showToast(`تم رفع (${file.name}) بنجاح`);
-                        setTimeout(resolve, 300);
+                        statusText.innerText = 'تم رفع ونقل الملف بنجاح!';
+                        showToast(`تم مشاركة (${file.name}) بنجاح`);
+                        setTimeout(resolve, 200);
                     };
 
                     reader.readAsDataURL(file);
@@ -725,17 +1101,18 @@
                 progressContainer.classList.add('hidden');
                 document.getElementById('uploadModal').classList.add('hidden');
                 progressBar.style.width = '0%';
-            }, 500);
+            }, 400);
         }
 
+        /* Enhanced Preview Overlay Handler */
         window.previewFile = async function(id) {
             let file = filesData.find(f => f.id === id);
-            if (!file) {
+            if (!file || !file.dataUrl) {
                 file = await getFileFromIDB(id);
             }
 
             if (!file) {
-                showToast("تعذر جلب معاينة الملف", "error");
+                showToast("تعذر جلب بيانات هذا الملف", "error");
                 return;
             }
 
@@ -743,43 +1120,84 @@
             const title = document.getElementById('previewTitle');
             const body = document.getElementById('previewBody');
             const downloadBtn = document.getElementById('downloadPreviewBtn');
+            const iconEl = document.getElementById('previewTypeIcon');
+            const metaInfo = document.getElementById('previewMetaInfo');
 
             title.innerText = file.name;
             downloadBtn.onclick = () => window.downloadFile(id);
+            metaInfo.innerText = `${formatBytes(file.size)} • ${file.ext.toUpperCase()} • ${file.date || ''}`;
+
+            const iconStyle = getFileIconClass(file.category, file.ext);
+            iconEl.className = `fa-solid ${iconStyle.icon} text-brand-400`;
 
             body.innerHTML = '';
 
+            // Image Preview
             if (file.category === 'images' && file.dataUrl) {
-                body.innerHTML = `<img src="${file.dataUrl}" alt="${file.name}" class="max-h-[70vh] rounded-xl object-contain shadow-xl">`;
-            } else if (file.category === 'media' && file.dataUrl) {
-                if (file.type.includes('video')) {
-                    body.innerHTML = `<video controls src="${file.dataUrl}" class="max-h-[70vh] w-full rounded-xl"></video>`;
+                body.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center p-2">
+                        <img src="${file.dataUrl}" alt="${file.name}" class="max-h-full max-w-full rounded-2xl object-contain shadow-2xl">
+                    </div>
+                `;
+            } 
+            // PDF Preview
+            else if (file.ext === 'pdf' && file.dataUrl) {
+                body.innerHTML = `
+                    <iframe src="${file.dataUrl}" class="w-full h-full rounded-2xl border-0" title="PDF Preview"></iframe>
+                `;
+            } 
+            // Media Preview
+            else if (file.category === 'media' && file.dataUrl) {
+                if (file.type.includes('video') || ['mp4', 'mkv', 'webm', 'mov'].includes(file.ext)) {
+                    body.innerHTML = `<video controls src="${file.dataUrl}" class="max-h-full w-full rounded-2xl shadow-xl"></video>`;
                 } else {
                     body.innerHTML = `
-                        <div class="text-center space-y-4 p-8">
-                            <i class="fa-solid fa-music text-5xl text-purple-400"></i>
+                        <div class="text-center space-y-4 p-8 my-auto">
+                            <div class="w-20 h-20 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-4xl mx-auto animate-pulse shadow-inner">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
                             <p class="text-sm font-bold text-slate-200">${file.name}</p>
                             <audio controls src="${file.dataUrl}" class="w-full max-w-md mx-auto"></audio>
                         </div>
                     `;
                 }
-            } else {
-                const iconStyle = getFileIconClass(file.category, file.ext);
-                body.innerHTML = `
-                    <div class="text-center space-y-4 p-8">
-                        <div class="w-20 h-20 rounded-3xl ${iconStyle.color} flex items-center justify-center text-4xl mx-auto">
-                            <i class="fa-solid ${iconStyle.icon}"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-base font-bold text-slate-200">${file.name}</h4>
-                            <p class="text-xs text-slate-400 mt-1">${formatBytes(file.size)} • ملف ${file.ext.toUpperCase()}</p>
-                        </div>
-                    </div>
-                `;
+            } 
+            // Code & Text Preview
+            else if (['txt', 'md', 'json', 'js', 'css', 'html', 'py', 'c', 'cpp', 'csv'].includes(file.ext) && file.dataUrl) {
+                try {
+                    const base64Content = file.dataUrl.split(',')[1];
+                    const decodedText = decodeURIComponent(escape(atob(base64Content)));
+                    body.innerHTML = `
+                        <pre class="w-full h-full p-4 text-xs font-mono bg-slate-900 text-emerald-400 overflow-auto rounded-2xl text-right dir-ltr whitespace-pre-wrap leading-relaxed">${escapeHtml(decodedText)}</pre>
+                    `;
+                } catch(e) {
+                    renderFallbackPreview(body, file, iconStyle);
+                }
+            } 
+            else {
+                renderFallbackPreview(body, file, iconStyle);
             }
 
             modal.classList.remove('hidden');
         };
+
+        function renderFallbackPreview(container, file, iconStyle) {
+            container.innerHTML = `
+                <div class="text-center space-y-4 p-8 my-auto">
+                    <div class="w-20 h-20 rounded-3xl ${iconStyle.color} flex items-center justify-center text-4xl mx-auto shadow-inner">
+                        <i class="fa-solid ${iconStyle.icon}"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-base font-bold text-slate-200">${file.name}</h4>
+                        <p class="text-xs text-slate-400">${formatBytes(file.size)} • ملف ${file.ext.toUpperCase()}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
 
         window.downloadFile = async function(id) {
             let file = filesData.find(f => f.id === id);
@@ -788,7 +1206,7 @@
             }
 
             if (!file || !file.dataUrl) {
-                showToast("رابط التحميل غير متوفر لهذا الملف", "error");
+                showToast("محتوى الملف غير متوفر للتحميل", "error");
                 return;
             }
 
@@ -801,37 +1219,51 @@
             showToast("جاري بدء التنزيل...");
         };
 
-        window.deleteFile = async function(id) {
-            if (currentUser) {
-                try {
-                    const fileDocRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${currentRoomCode}_files`, id);
-                    await deleteDoc(fileDocRef);
-                    showToast("تم حذف الملف بنجاح");
-                } catch (e) {
-                    filesData = filesData.filter(f => f.id !== id);
-                    saveLocalFallback();
-                    renderFiles();
-                    showToast("تم حذف الملف محلياً");
-                }
-            } else {
+        window.deleteFile = function(id) {
+            showConfirmModal("حذف الملف", "هل أنت تأكد من حذف هذا الملف من الغرفة؟", async () => {
                 filesData = filesData.filter(f => f.id !== id);
-                saveLocalFallback();
+                await deleteFileFromIDB(id);
                 renderFiles();
-                showToast("تم حذف الملف");
-            }
+
+                broadcastToPeers({
+                    type: 'DELETE_FILE',
+                    id: id
+                });
+
+                showToast("تم حذف الملف بنجاح");
+            });
         };
+
+        function showConfirmModal(title, message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalMessage').innerText = message;
+
+            const yesBtn = document.getElementById('confirmYesBtn');
+            const noBtn = document.getElementById('confirmNoBtn');
+
+            const close = () => modal.classList.add('hidden');
+
+            yesBtn.onclick = () => {
+                close();
+                onConfirm();
+            };
+            noBtn.onclick = close;
+
+            modal.classList.remove('hidden');
+        }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             
             const isError = type === 'error';
-            toast.className = `px-4 py-3 rounded-xl text-xs font-bold text-white shadow-xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${
-                isError ? 'bg-rose-600 border border-rose-500' : 'bg-slate-800 border border-brand-500/40'
+            toast.className = `pointer-events-auto px-4 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 ${
+                isError ? 'bg-rose-600 border border-rose-500' : 'bg-slate-900/90 border border-brand-500/40'
             }`;
 
             toast.innerHTML = `
-                <i class="fa-solid ${isError ? 'fa-circle-exclamation text-rose-300' : 'fa-circle-check text-brand-400'}"></i>
+                <i class="fa-solid ${isError ? 'fa-circle-exclamation text-rose-300 text-sm' : 'fa-circle-check text-brand-400 text-sm'}"></i>
                 <span>${message}</span>
             `;
 
@@ -844,23 +1276,46 @@
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 3200);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            initAuth();
+            initPeerConnection(currentRoomCode);
+
+            // Re-connect trigger on status badge click
+            document.getElementById('connectionStatusBadge').addEventListener('click', () => {
+                initPeerConnection(currentRoomCode);
+            });
 
             // Search input listener
             document.getElementById('searchInput').addEventListener('input', renderFiles);
+
+            // Sort Selector Listener
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                sortBy = e.target.value;
+                renderFiles();
+            });
+
+            // Clear Room Button
+            document.getElementById('clearRoomBtn').addEventListener('click', () => {
+                showConfirmModal("تفريغ الغرفة", "هل أنت تأكد من رغبتك في مسح جميع الملفات المرفوعة بالكامل؟", async () => {
+                    filesData = [];
+                    await clearIDB();
+                    renderFiles();
+
+                    broadcastToPeers({ type: 'CLEAR_ROOM' });
+                    showToast("تم إفراغ محتويات الغرفة بنجاح");
+                });
+            });
 
             // Category buttons
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.category-btn').forEach(b => {
-                        b.classList.remove('bg-brand-600', 'text-white');
+                        b.classList.remove('bg-gradient-to-r', 'from-brand-600', 'to-indigo-600', 'text-white', 'shadow-md', 'font-bold');
                         b.classList.add('text-slate-400');
                     });
-                    e.target.classList.add('bg-brand-600', 'text-white');
+                    e.target.classList.add('bg-gradient-to-r', 'from-brand-600', 'to-indigo-600', 'text-white', 'shadow-md', 'font-bold');
                     e.target.classList.remove('text-slate-400');
 
                     currentCategory = e.target.dataset.category;
@@ -868,22 +1323,22 @@
                 });
             });
 
-            // View toggle
+            // View Layout Toggle Buttons
             document.getElementById('viewGridBtn').addEventListener('click', () => {
                 viewMode = 'grid';
-                document.getElementById('viewGridBtn').className = 'p-2 rounded-lg bg-slate-800 text-brand-400 transition-all';
-                document.getElementById('viewListBtn').className = 'p-2 rounded-lg text-slate-400 hover:text-white transition-all';
+                document.getElementById('viewGridBtn').className = 'p-2 rounded-xl bg-slate-800 text-brand-400 font-bold transition-all';
+                document.getElementById('viewListBtn').className = 'p-2 rounded-xl text-slate-400 hover:text-white transition-all';
                 renderFiles();
             });
 
             document.getElementById('viewListBtn').addEventListener('click', () => {
                 viewMode = 'list';
-                document.getElementById('viewListBtn').className = 'p-2 rounded-lg bg-slate-800 text-brand-400 transition-all';
-                document.getElementById('viewGridBtn').className = 'p-2 rounded-lg text-slate-400 hover:text-white transition-all';
+                document.getElementById('viewListBtn').className = 'p-2 rounded-xl bg-slate-800 text-brand-400 font-bold transition-all';
+                document.getElementById('viewGridBtn').className = 'p-2 rounded-xl text-slate-400 hover:text-white transition-all';
                 renderFiles();
             });
 
-            // Modals Logic
+            // Upload Modal UI
             const uploadModal = document.getElementById('uploadModal');
             const openUploadBtn = document.getElementById('openUploadBtn');
             const emptyUploadBtn = document.getElementById('emptyUploadBtn');
@@ -925,7 +1380,7 @@
                 }
             });
 
-            // Join PIN Modal
+            // Join Room PIN Modal
             const joinRoomModal = document.getElementById('joinRoomModal');
             const openJoinModalBtn = document.getElementById('openJoinModalBtn');
             const closeJoinRoomBtn = document.getElementById('closeJoinRoomBtn');
@@ -944,22 +1399,20 @@
             confirmJoinRoomBtn.addEventListener('click', () => {
                 const code = pinCodeInput.value.trim();
                 if (/^\d{4}$/.test(code)) {
-                    connectToRoom(code);
                     joinRoomModal.classList.add('hidden');
-                    showToast(`تم الاتصال بالغرفة الرقمية (${code})`);
+                    initPeerConnection(code);
                 } else {
-                    showToast("يرجى إدخال كود مكون من 4 أرقام", "error");
+                    showToast("يرجى إدخال رمز مكون من 4 أرقام", "error");
                 }
             });
 
             generateNewRoomBtn.addEventListener('click', () => {
                 const newCode = generate4DigitCode();
-                connectToRoom(newCode);
                 joinRoomModal.classList.add('hidden');
-                showToast(`تم توليد كود جديد: (${newCode})`);
+                initPeerConnection(newCode);
             });
 
-            // QR Share Modal
+            // QR & Share Link Modal
             const shareHubBtn = document.getElementById('shareHubBtn');
             const shareHubModal = document.getElementById('shareHubModal');
             const closeShareHubBtn = document.getElementById('closeShareHubBtn');
@@ -970,32 +1423,37 @@
             shareHubBtn.addEventListener('click', () => {
                 const currentUrl = window.location.origin + window.location.pathname + '#' + currentRoomCode;
                 shareUrlInput.value = currentUrl;
-                qrCodeContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}" alt="QR Code" class="w-36 h-36">`;
+                qrCodeContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(currentUrl)}" alt="QR Code" class="w-40 h-40 rounded-xl">`;
                 shareHubModal.classList.remove('hidden');
             });
 
             closeShareHubBtn.addEventListener('click', () => shareHubModal.classList.add('hidden'));
 
-            copyShareUrlBtn.addEventListener('click', () => {
-                shareUrlInput.select();
+            copyShareUrlBtn.addEventListener('click', async () => {
+                const urlToCopy = shareUrlInput.value;
                 try {
-                    document.execCommand('copy');
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(urlToCopy);
+                    } else {
+                        shareUrlInput.select();
+                        document.execCommand('copy');
+                    }
                     showToast("تم نسخ رابط الغرفة بنجاح!");
                 } catch(err) {
-                    showToast("عذراً، فشل نسخ الرابط تلقائياً", "error");
+                    showToast("تعذر نسخ الرابط تلقائياً", "error");
                 }
             });
 
-            // Preview Modal close
+            // Preview Modal Close
             document.getElementById('closePreviewBtn').addEventListener('click', () => {
                 document.getElementById('previewModal').classList.add('hidden');
             });
 
+            // Handle URL Hash changes
             window.addEventListener('hashchange', () => {
                 const hash = window.location.hash.replace('#', '').trim();
                 if (/^\d{4}$/.test(hash) && hash !== currentRoomCode) {
-                    connectToRoom(hash);
-                    showToast(`تم الانضمام للغرفة (${hash})`);
+                    initPeerConnection(hash);
                 }
             });
         });
