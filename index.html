@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سحابتي - منصة التبادل الفوري للملفات والكتب</title>
+    <title>مركز مشاركة الملفات والكتب | Cloud Vault</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,59 +14,57 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            900: '#312e81',
-                        },
-                        darkbg: '#0f172a',
-                        darkcard: '#1e293b'
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
                     },
                     fontFamily: {
-                        sans: ['Tajawal', 'Inter', 'sans-serif']
+                        sans: ['Tajawal', 'Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 40%, #020617 100%);
-            min-height: 100vh;
-            color: #f8fafc;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            overflow-x: hidden;
         }
 
-        /* Glassmorphism styling */
+        /* Glassmorphism Styles */
         .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(17, 24, 39, 0.75);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(8px);
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(99, 102, 241, 0.4);
-            box-shadow: 0 12px 24px -8px rgba(99, 102, 241, 0.25);
-        }
-
-        .drop-zone-active {
-            border-color: #6366f1 !important;
-            background: rgba(99, 102, 241, 0.15) !important;
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.15);
         }
 
         /* Custom Scrollbar */
@@ -74,297 +73,263 @@
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
+            background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
             background: #334155;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #0ea5e9;
+        }
+
+        .dir-ltr {
+            direction: ltr;
         }
     </style>
 </head>
-<body class="antialiased selection:bg-brand-500 selection:text-white">
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
-    <div id="app" class="min-h-screen flex flex-col">
-        
-        <!-- Header Nav -->
-        <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 px-4 lg:px-8 py-3.5">
-            <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                
-                <!-- Logo & Brand -->
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/30 text-white font-bold text-xl">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-200 bg-clip-text text-transparent">
-                            سحابتي الشاملة
-                        </h1>
-                        <p class="text-xs text-slate-400 font-medium">مشاركة فورية وسريعة جداً للملفات والكتب</p>
-                    </div>
-                </div>
-
-                <!-- Search Bar -->
-                <div class="hidden md:flex flex-1 max-w-md mx-4">
-                    <div class="relative w-full">
-                        <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="searchInput" placeholder="ابحث باسم الملف، الكتاب، أو الصورة..." 
-                               class="w-full pl-4 pr-10 py-2 rounded-xl bg-slate-900/60 border border-slate-700/60 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
-                    </div>
-                </div>
-
-                <!-- Action Controls -->
-                <div class="flex items-center gap-2.5">
-                    <!-- Global Sync Badge -->
-                    <div id="syncBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        مباشر ومزامن
-                    </div>
-
-                    <!-- Share App QR / Link Button -->
-                    <button id="shareHubBtn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700" title="مشاركة رابط المنصة للاجهزة الأخرى">
-                        <i class="fa-solid fa-qrcode text-lg"></i>
-                    </button>
-
-                    <!-- Upload Trigger Button -->
-                    <button id="openUploadBtn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold shadow-lg shadow-brand-600/25 transition-all text-sm">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>رفع جديد</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 flex flex-col md:flex-row gap-6">
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             
-            <!-- Sidebar Navigation -->
-            <aside class="w-full md:w-64 flex-shrink-0 flex flex-col gap-4">
-                <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-1">
-                    <button class="nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-brand-600 text-white shadow-md shadow-brand-600/20" data-category="all">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-folder-open text-base"></i>
-                            <span>جميع الملفات</span>
-                        </div>
-                        <span id="count-all" class="text-xs bg-white/20 px-2 py-0.5 rounded-full">0</span>
-                    </button>
-
-                    <button class="nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all" data-category="images">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-image text-emerald-400 text-base"></i>
-                            <span>الصور والوسائط</span>
-                        </div>
-                        <span id="count-images" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">0</span>
-                    </button>
-
-                    <button class="nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all" data-category="books">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-book-open text-amber-400 text-base"></i>
-                            <span>الكتب والمستندات</span>
-                        </div>
-                        <span id="count-books" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">0</span>
-                    </button>
-
-                    <button class="nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all" data-category="media">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-file-audio text-purple-400 text-base"></i>
-                            <span>الصوتيات بالفيديو</span>
-                        </div>
-                        <span id="count-media" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">0</span>
-                    </button>
-
-                    <button class="nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all" data-category="other">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-box text-cyan-400 text-base"></i>
-                            <span>أرشيف وملفات أخرى</span>
-                        </div>
-                        <span id="count-other" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">0</span>
-                    </button>
-                </div>
-
-                <!-- Storage Info Card -->
-                <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-3">
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-400 font-medium">سعة التخزين النشطة</span>
-                        <span id="totalStorageText" class="text-brand-400 font-bold">0 MB</span>
-                    </div>
-                    <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                        <div id="storageProgressBar" class="h-full bg-gradient-to-r from-brand-500 to-indigo-400 w-0 transition-all duration-500"></div>
-                    </div>
-                    <p class="text-[11px] text-slate-500 leading-relaxed">
-                        <i class="fa-solid fa-bolt text-amber-400 ml-1"></i> يتم التحميل والمشاركة بشكل مباشر وسريع جداً بين جميع أجهزتك المتصلة بنفس الرابط.
-                    </p>
-                </div>
-            </aside>
-
-            <section class="flex-1 flex flex-col gap-4">
-                
-                <!-- Drag and Drop Upload Area -->
-                <div id="dropZone" class="glass-panel p-6 rounded-2xl border-2 border-dashed border-slate-700 text-center cursor-pointer transition-all duration-300 hover:border-brand-500 group relative">
-                    <input type="file" id="fileInput" multiple class="hidden">
-                    
-                    <div class="flex flex-col items-center justify-center gap-2">
-                        <div class="w-14 h-14 rounded-full bg-brand-500/10 text-brand-400 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-brand-500 group-hover:text-white transition-all">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-base font-bold text-slate-200">اسحب وأفلت الملفات، الصور، أو الكتب هنا</h3>
-                            <p class="text-xs text-slate-400 mt-1">أو اضغط للتصفح واختيار الملفات من جهازك (أي حجم أو صيغة)</p>
-                        </div>
-                        <div class="flex gap-2 mt-2">
-                            <span class="px-2.5 py-1 rounded-md text-[10px] bg-slate-800 text-slate-400 font-semibold border border-slate-700">PNG, JPG, GIF</span>
-                            <span class="px-2.5 py-1 rounded-md text-[10px] bg-slate-800 text-slate-400 font-semibold border border-slate-700">PDF, EPUB, DOCX</span>
-                            <span class="px-2.5 py-1 rounded-md text-[10px] bg-slate-800 text-slate-400 font-semibold border border-slate-700">ZIP, MP3, MP4</span>
-                        </div>
-                    </div>
-
-                    <!-- Uploading Overlay / Progress -->
-                    <div id="uploadProgressContainer" class="hidden absolute inset-0 glass-panel rounded-2xl flex-col items-center justify-center p-4 z-20">
-                        <div class="w-full max-w-xs space-y-2">
-                            <div class="flex justify-between text-xs font-bold text-slate-200">
-                                <span id="uploadStatusText">جاري رفع الملف...</span>
-                                <span id="uploadPercent">0%</span>
-                            </div>
-                            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-brand-500 w-0 transition-all duration-200"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Search for mobile -->
-                <div class="md:hidden w-full">
-                    <div class="relative w-full">
-                        <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="searchInputMobile" placeholder="ابحث باسم الملف أو الكتاب..." 
-                               class="w-full pl-4 pr-10 py-2 rounded-xl bg-slate-900/60 border border-slate-700 text-sm text-slate-200">
-                    </div>
-                </div>
-
-                <!-- Section Header and Toolbar -->
-                <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <div class="flex items-center gap-2">
-                        <h2 id="currentCategoryTitle" class="text-lg font-bold text-white">جميع الملفات</h2>
-                        <span id="filteredCountText" class="text-xs text-slate-400">(0 ملفات)</span>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <!-- View Toggle -->
-                        <div class="flex p-1 rounded-xl bg-slate-900/80 border border-slate-800">
-                            <button id="viewGridBtn" class="p-1.5 rounded-lg text-brand-400 bg-slate-800 transition-all" title="عرض كشبكة">
-                                <i class="fa-solid fa-border-all text-sm"></i>
-                            </button>
-                            <button id="viewListBtn" class="p-1.5 rounded-lg text-slate-400 hover:text-white transition-all" title="عرض كقائمة">
-                                <i class="fa-solid fa-list text-sm"></i>
-                            </button>
-                        </div>
-
-                        <!-- Sort selector -->
-                        <select id="sortSelect" class="bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-slate-300 px-3 py-2 focus:outline-none focus:border-brand-500">
-                            <option value="newest">الأحدث أولاً</option>
-                            <option value="oldest">الأقدم أولاً</option>
-                            <option value="size">الأكبر حجماً</option>
-                            <option value="name">بالاسم</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="filesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Dynamic Files will be rendered here -->
-                </div>
-
-                <!-- Empty State Handler -->
-                <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
-                    <div class="w-20 h-20 rounded-full bg-slate-800/60 text-slate-600 flex items-center justify-center text-4xl mb-3">
-                        <i class="fa-solid fa-box-open"></i>
-                    </div>
-                    <h4 class="text-base font-bold text-slate-300">لا توجد ملفات مرفوعة حتى الآن</h4>
-                    <p class="text-xs text-slate-500 mt-1 max-w-sm">قم برفع أي صور أو كتب أو مستندات وسوف تظهر هنا فوراً وعلى أي جهاز يفتح هذا الرابط.</p>
-                </div>
-
-            </section>
-        </main>
-
-        <!-- File Preview Modal -->
-        <div id="previewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-            <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden flex flex-col border border-slate-700 shadow-2xl">
-                
-                <!-- Modal Header -->
-                <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
-                    <div class="flex items-center gap-3 overflow-hidden">
-                        <span id="previewFileIcon" class="text-xl text-brand-400"></span>
-                        <h3 id="previewFileName" class="text-base font-bold text-white truncate">اسم الملف</h3>
-                    </div>
-                    <button id="closePreviewBtn" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-
-                <!-- Modal Body Preview Area -->
-                <div id="previewContent" class="flex-1 p-6 overflow-auto flex items-center justify-center min-h-[300px] bg-slate-950/40">
-                    <!-- Dynamic Preview (Image, Audio, PDF text viewer, Download button) -->
-                </div>
-
-                <!-- Modal Footer Controls -->
-                <div class="px-5 py-3 border-t border-slate-800 flex items-center justify-between bg-slate-900/60">
-                    <span id="previewFileSize" class="text-xs text-slate-400">الحجم: -</span>
-                    <div class="flex items-center gap-2">
-                        <button id="previewShareBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-all flex items-center gap-1.5">
-                            <i class="fa-solid fa-share-nodes"></i> مشاركة
-                        </button>
-                        <a id="previewDownloadBtn" download href="#" class="px-4 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-semibold text-white transition-all flex items-center gap-1.5">
-                            <i class="fa-solid fa-download"></i> تنزيل الملف
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- QR Code & Share Platform Modal -->
-        <div id="shareHubModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-slate-700 shadow-2xl space-y-5 text-center">
-                <div class="w-12 h-12 rounded-full bg-brand-500/10 text-brand-400 flex items-center justify-center text-xl mx-auto">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
+            <!-- App Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white">افتح الصفحة على أي جهاز آخر</h3>
-                    <p class="text-xs text-slate-400 mt-1">انسخ الرابط أدناه أو شاركه لتبادل الملفات فوراً دون أي إعدادات</p>
+                    <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
+                        <span>سحابة المشاركة السريعة</span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">v2.5</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">مزامنة حية للكتب والملفات والصور بين جميع الأجهزة</p>
                 </div>
+            </div>
 
-                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-2">
-                    <input type="text" id="shareUrlInput" readonly class="bg-transparent text-xs text-slate-300 w-full focus:outline-none text-left font-mono">
-                    <button id="copyShareUrlBtn" class="px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white flex-shrink-0 transition-all">
-                        نسخ
+            <!-- Action Controls & Room Code Badge -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Room Code & Join Button -->
+                <div class="flex items-center gap-1.5 bg-slate-900/90 border border-brand-500/30 px-3 py-1.5 rounded-xl text-xs shadow-inner">
+                    <span class="text-slate-400 font-medium hidden sm:inline">كود الغرفة:</span>
+                    <span id="roomCodeDisplay" class="font-mono font-black text-brand-400 tracking-wider text-sm">----</span>
+                    <button id="openJoinModalBtn" class="mr-1 text-slate-400 hover:text-white p-1 transition-colors" title="إدخال كود جهاز آخر للربط">
+                        <i class="fa-solid fa-key text-xs text-amber-400"></i>
                     </button>
                 </div>
 
-                <div class="flex justify-center">
-                    <div id="qrCodeContainer" class="p-3 bg-white rounded-xl shadow-lg">
-                        <!-- QR Code image generated dynamically -->
-                    </div>
+                <!-- Live Connected Devices Counter -->
+                <div id="syncBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="connectedCountText">1 جهاز متصل</span>
                 </div>
 
-                <button id="closeShareHubBtn" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">
-                    إغلاق
+                <!-- Share QR / Link Modal Button -->
+                <button id="shareHubBtn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700" title="مشاركة رابط المنصة والكود">
+                    <i class="fa-solid fa-qrcode text-base"></i>
+                </button>
+
+                <!-- Upload File Trigger Button -->
+                <button id="openUploadBtn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-brand-600/25 transition-all text-xs sm:text-sm">
+                    <i class="fa-solid fa-plus text-sm"></i>
+                    <span class="hidden sm:inline">رفع ملف جديد</span>
+                    <span class="sm:hidden">رفع</span>
                 </button>
             </div>
         </div>
+    </header>
 
-        <!-- Custom Notification Toast -->
-        <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-sm shadow-2xl">
-            <span id="toastIcon" class="text-brand-400 text-base"><i class="fa-solid fa-circle-check"></i></span>
-            <span id="toastMessage">تم العملية بنجاح</span>
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+        <!-- Search & Filter Controls -->
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- Search Bar -->
+            <div class="relative w-full md:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="ابحث باسم الكتاب، الصورة، أو الملف..." class="w-full pr-10 pl-4 py-2.5 bg-slate-900/80 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+            </div>
+
+            <!-- Categories & View Toggle -->
+            <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-3">
+                <div class="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 overflow-x-auto max-w-full text-xs">
+                    <button data-category="all" class="category-btn active px-3 py-1.5 rounded-lg bg-brand-600 text-white font-medium transition-all">الكل</button>
+                    <button data-category="books" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">كتب ومستندات</button>
+                    <button data-category="images" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">صور</button>
+                    <button data-category="media" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">وسائط</button>
+                    <button data-category="other" class="category-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">أخرى</button>
+                </div>
+
+                <div class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button id="viewGridBtn" class="p-2 rounded-lg bg-slate-800 text-brand-400 transition-all" title="عرض شبكي">
+                        <i class="fa-solid fa-border-all"></i>
+                    </button>
+                    <button id="viewListBtn" class="p-2 rounded-lg text-slate-400 hover:text-white transition-all" title="عرض القائمة">
+                        <i class="fa-solid fa-list"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
+        <!-- Dynamic Files Container -->
+        <div id="filesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Dynamic Content populated via JavaScript -->
+        </div>
+
+        <!-- Empty State View -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center space-y-4">
+            <div class="w-20 h-20 rounded-3xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center text-slate-500 text-3xl">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <div class="space-y-1">
+                <h3 class="text-base font-bold text-slate-300">لا توجد ملفات مرفوعة حالياً</h3>
+                <p class="text-xs text-slate-500 max-w-sm">قم برفع كُتب، صور، أو مستندات ليتم مشاركتها فوراً مع باقي الأجهزة المتصلة على نفس الكود.</p>
+            </div>
+            <button id="emptyUploadBtn" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-all flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>رفع أول ملف الآن</span>
+            </button>
+        </div>
+    </main>
+
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-slate-700 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-arrow-up text-brand-400"></i>
+                    <span>رفع ملف أو كتاب جديد</span>
+                </h3>
+                <button id="closeUploadModalBtn" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Drag and Drop Dropzone -->
+            <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-8 text-center space-y-3 cursor-pointer bg-slate-900/40 hover:bg-slate-900/80 transition-all">
+                <input type="file" id="fileInput" class="hidden" multiple>
+                <div class="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-slate-200">اضغط هنا لاختيار الملفات أو اسحبها إلى هنا</p>
+                    <p class="text-xs text-slate-500 mt-1">يدعم الكتب (PDF, EPUB)، الصور، الصوتيات والملفات المضغوطة</p>
+                </div>
+            </div>
+
+            <!-- Selected File Info & Progress -->
+            <div id="uploadProgressContainer" class="hidden space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                <div class="flex items-center justify-between text-xs">
+                    <span id="uploadFileName" class="font-bold text-slate-200 truncate max-w-[200px]">filename.pdf</span>
+                    <span id="uploadFileSize" class="text-slate-400">0 MB</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-gradient-to-r from-brand-500 to-indigo-500 h-full w-0 transition-all duration-200"></div>
+                </div>
+                <p id="uploadStatusText" class="text-[11px] text-brand-400 font-medium text-center">جاري تجهيز الملف وحفظه...</p>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button id="cancelUploadBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all">إلغاء</button>
+            </div>
+        </div>
     </div>
+
+    <!-- Share Room & QR Modal -->
+    <div id="shareHubModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-slate-700 shadow-2xl space-y-5 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-white">افتح الصفحة على أي جهاز آخر</h3>
+                <p class="text-xs text-slate-400 mt-1">كود الغرفة المباشر الخاص بك هو: <span id="shareModalRoomCode" class="font-bold font-mono text-brand-400 text-sm"></span></p>
+            </div>
+
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-2">
+                <input type="text" id="shareUrlInput" readonly class="bg-transparent text-xs text-slate-300 w-full focus:outline-none text-left font-mono">
+                <button id="copyShareUrlBtn" class="px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white flex-shrink-0 transition-all">
+                    نسخ
+                </button>
+            </div>
+
+            <div class="flex justify-center p-3 bg-white rounded-2xl shadow-lg w-fit mx-auto">
+                <div id="qrCodeContainer">
+                    <!-- QR Code generated dynamically -->
+                </div>
+            </div>
+
+            <button id="closeShareHubBtn" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all">
+                إغلاق
+            </button>
+        </div>
+    </div>
+
+    <!-- Join Room PIN Modal -->
+    <div id="joinRoomModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-2xl border border-slate-700 shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-white">الربط بجهاز آخر</h3>
+                <p class="text-xs text-slate-400 mt-1">أدخل الكود المكون من 4 أرقام الظاهر على الجهاز الرئيسي</p>
+            </div>
+
+            <div class="flex justify-center dir-ltr">
+                <input type="text" maxlength="4" id="pinCodeInput" placeholder="1234" class="w-44 text-center text-3xl font-mono font-black tracking-widest px-3 py-2 bg-slate-900 border border-brand-500/50 rounded-xl text-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+
+            <div class="flex gap-2">
+                <button id="confirmJoinRoomBtn" class="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white transition-all">
+                    ربط الآن
+                </button>
+                <button id="generateNewRoomBtn" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all" title="توليد كود جديد لجهازك">
+                    كود جديد
+                </button>
+                <button id="closeJoinRoomBtn" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-400 transition-all">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-4xl max-h-[90vh] p-6 rounded-2xl border border-slate-700 shadow-2xl flex flex-col space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 id="previewTitle" class="text-base font-bold text-white truncate max-w-md">معاينة الملف</h3>
+                <button id="closePreviewBtn" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="previewBody" class="flex-1 flex items-center justify-center overflow-auto min-h-[300px]">
+                <!-- Preview content rendered dynamically -->
+            </div>
+
+            <div class="flex justify-end gap-3 border-t border-slate-800 pt-3">
+                <a id="downloadPreviewBtn" download class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-download"></i>
+                    <span>تنزيل الملف</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/60 py-4 px-4 text-center text-xs text-slate-500">
+        <p>منصة نقل ومشاركة الملفات والكتب بين الأجهزة v2.5 | جاهزة للرفع على GitHub Pages</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global Configuration & App ID Setup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'cloud-vault-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
@@ -377,18 +342,39 @@
                 appId: "1:1234567890:web:demo"
             };
 
-        // Initialize Firebase Services
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Global State Variable
         let filesData = [];
         let currentCategory = 'all';
-        let viewMode = 'grid'; // 'grid' or 'list'
+        let viewMode = 'grid';
         let currentUser = null;
+        let filesUnsubscribe = null;
+        let presenceUnsubscribe = null;
+        let presenceInterval = null;
 
-        // IndexedDB Cache for smooth offline loading & speed
+        function getInitialRoomCode() {
+            const hash = window.location.hash.replace('#', '').trim();
+            if (/^\d{4}$/.test(hash)) return hash;
+            const saved = localStorage.getItem('cloud_vault_room_code');
+            if (saved && /^\d{4}$/.test(saved)) return saved;
+            return generate4DigitCode();
+        }
+
+        function generate4DigitCode() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        let currentRoomCode = getInitialRoomCode();
+
+        function updateRoomUI() {
+            document.getElementById('roomCodeDisplay').innerText = currentRoomCode;
+            document.getElementById('shareModalRoomCode').innerText = currentRoomCode;
+            window.location.hash = currentRoomCode;
+            localStorage.setItem('cloud_vault_room_code', currentRoomCode);
+        }
+
         const DB_NAME = 'CloudVaultDB';
         const DB_VERSION = 1;
 
@@ -412,7 +398,7 @@
                 const tx = idb.transaction('files', 'readwrite');
                 tx.objectStore('files').put(fileObj);
             } catch(e) {
-                console.warn("IDB Save warning:", e);
+                console.warn("IndexedDB Save warning:", e);
             }
         }
 
@@ -430,7 +416,6 @@
             }
         }
 
-        // Authentication & Initialization Loop
         async function initAuth() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -440,108 +425,141 @@
                     const userCredential = await signInAnonymously(auth);
                     currentUser = userCredential.user;
                 }
-                subscribeToFiles();
+                updateRoomUI();
+                connectToRoom(currentRoomCode);
             } catch (err) {
-                console.warn("Auth initialization note:", err);
-                // Fallback to local offline mode if auth fails or restricted
+                console.warn("Auth note:", err);
                 setupLocalFallbackMode();
             }
+        }
+
+        function connectToRoom(code) {
+            currentRoomCode = code;
+            updateRoomUI();
+
+            if (filesUnsubscribe) filesUnsubscribe();
+            if (presenceUnsubscribe) presenceUnsubscribe();
+            if (presenceInterval) clearInterval(presenceInterval);
+
+            subscribeToFiles();
+            startPresenceHeartbeat();
+            subscribeToPresence();
         }
 
         function subscribeToFiles() {
             if (!currentUser) return;
 
-            // MANDATORY RULE 1: STRICT PATH `/artifacts/{appId}/public/data/{collectionName}`
-            const filesCollection = collection(db, 'artifacts', appId, 'public', 'data', 'shared_files');
+            const collectionName = `room_${currentRoomCode}_files`;
+            const filesCollection = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
 
-            // MANDATORY RULE 2: Simple query without complex indexes
-            onSnapshot(filesCollection, (snapshot) => {
+            filesUnsubscribe = onSnapshot(filesCollection, (snapshot) => {
                 filesData = [];
                 snapshot.forEach(docSnap => {
                     filesData.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 renderFiles();
-                updateStats();
             }, (error) => {
-                console.warn("Firestore sync warning, engaging local cache:", error);
+                console.warn("Firestore sync warning, engaging local storage:", error);
                 setupLocalFallbackMode();
             });
         }
 
+        function startPresenceHeartbeat() {
+            if (!currentUser) return;
+            const presenceDocRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${currentRoomCode}_presence`, currentUser.uid);
+            
+            const sendHeartbeat = () => {
+                setDoc(presenceDocRef, {
+                    lastSeen: Date.now(),
+                    device: navigator.userAgent.includes('Mobile') ? 'هاتف' : 'كمبيوتر'
+                }, { merge: true }).catch(() => {});
+            };
+
+            sendHeartbeat();
+            presenceInterval = setInterval(sendHeartbeat, 10000);
+        }
+
+        function subscribeToPresence() {
+            if (!currentUser) return;
+
+            const presenceCollection = collection(db, 'artifacts', appId, 'public', 'data', `room_${currentRoomCode}_presence`);
+            
+            presenceUnsubscribe = onSnapshot(presenceCollection, (snapshot) => {
+                const now = Date.now();
+                let activeCount = 0;
+
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data && data.lastSeen && (now - data.lastSeen < 25000)) {
+                        activeCount++;
+                    }
+                });
+
+                const countDisplay = Math.max(1, activeCount);
+                document.getElementById('connectedCountText').innerText = `${countDisplay} ${countDisplay === 1 ? 'جهاز متصل' : 'أجهزة متصلة'}`;
+            }, () => {
+                document.getElementById('connectedCountText').innerText = '1 جهاز متصل';
+            });
+        }
+
         function setupLocalFallbackMode() {
-            // LocalStorage fallback for non-firebase environments
-            const saved = localStorage.getItem('cloud_vault_local_files');
+            const saved = localStorage.getItem(`cloud_vault_files_${currentRoomCode}`);
             if (saved) {
                 try { filesData = JSON.parse(saved); } catch(e){ filesData = []; }
+            } else {
+                filesData = [];
             }
             renderFiles();
-            updateStats();
         }
 
         function saveLocalFallback() {
-            localStorage.setItem('cloud_vault_local_files', JSON.stringify(filesData.map(f => ({
+            localStorage.setItem(`cloud_vault_files_${currentRoomCode}`, JSON.stringify(filesData.map(f => ({
                 ...f,
-                // store metadata
                 dataUrl: f.dataUrl ? (f.dataUrl.length < 500000 ? f.dataUrl : '') : ''
             }))));
         }
 
-        // Helper: File Type Detectors & Icons
-        function getCategoryType(mimeType, name) {
-            const ext = name.split('.').pop().toLowerCase();
-            if (mimeType.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
-                return 'images';
-            }
-            if (mimeType.includes('pdf') || mimeType.includes('epub') || ['pdf', 'epub', 'doc', 'docx', 'txt', 'rtf'].includes(ext)) {
+        function getCategoryFromFile(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const mime = file.type.toLowerCase();
+
+            if (['pdf', 'epub', 'mobi', 'doc', 'docx', 'txt', 'rtf'].includes(ext) || mime.includes('pdf') || mime.includes('document')) {
                 return 'books';
             }
-            if (mimeType.startsWith('audio/') || mimeType.startsWith('video/') || ['mp3', 'wav', 'ogg', 'mp4', 'mkv'].includes(ext)) {
+            if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext) || mime.includes('image')) {
+                return 'images';
+            }
+            if (['mp3', 'wav', 'ogg', 'mp4', 'mkv', 'avi', 'mov'].includes(ext) || mime.includes('audio') || mime.includes('video')) {
                 return 'media';
             }
             return 'other';
         }
 
-        function getFileIconClass(category, ext) {
-            switch(category) {
-                case 'images': return 'fa-solid fa-file-image text-emerald-400';
-                case 'books': return ext === 'pdf' ? 'fa-solid fa-file-pdf text-rose-400' : 'fa-solid fa-book text-amber-400';
-                case 'media': return 'fa-solid fa-file-audio text-purple-400';
-                default: return 'fa-solid fa-file-zipper text-cyan-400';
-            }
-        }
-
-        function formatBytes(bytes, decimals = 1) {
+        function formatBytes(bytes) {
             if (bytes === 0) return '0 B';
             const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function getFileIconClass(category, ext) {
+            if (category === 'books') return { icon: 'fa-book-open', color: 'text-amber-400 bg-amber-500/10' };
+            if (category === 'images') return { icon: 'fa-file-image', color: 'text-emerald-400 bg-emerald-500/10' };
+            if (category === 'media') return { icon: 'fa-file-audio', color: 'text-purple-400 bg-purple-500/10' };
+            return { icon: 'fa-file-zipper', color: 'text-brand-400 bg-brand-500/10' };
         }
 
         function renderFiles() {
             const container = document.getElementById('filesContainer');
             const emptyState = document.getElementById('emptyState');
-            const searchVal = (document.getElementById('searchInput').value || document.getElementById('searchInputMobile').value || '').toLowerCase();
-            const sortBy = document.getElementById('sortSelect').value;
+            const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
 
-            // Filter
             let filtered = filesData.filter(file => {
-                const matchesCat = currentCategory === 'all' || file.category === currentCategory;
-                const matchesSearch = file.name.toLowerCase().includes(searchVal);
-                return matchesCat && matchesSearch;
+                const matchesCategory = currentCategory === 'all' || file.category === currentCategory;
+                const matchesSearch = !searchQuery || file.name.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
             });
-
-            // Sort (In Memory sorting as per RULE 2)
-            filtered.sort((a, b) => {
-                if (sortBy === 'newest') return (b.createdAt || 0) - (a.createdAt || 0);
-                if (sortBy === 'oldest') return (a.createdAt || 0) - (b.createdAt || 0);
-                if (sortBy === 'size') return (b.size || 0) - (a.size || 0);
-                if (sortBy === 'name') return a.name.localeCompare(b.name);
-                return 0;
-            });
-
-            document.getElementById('filteredCountText').innerText = `(${filtered.length} ملف)`;
 
             if (filtered.length === 0) {
                 container.innerHTML = '';
@@ -554,295 +572,208 @@
             emptyState.classList.remove('flex');
 
             if (viewMode === 'grid') {
-                container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
+                container.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
                 container.innerHTML = filtered.map(file => {
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    const iconClass = getFileIconClass(file.category, ext);
-                    const isImg = file.category === 'images' && file.dataUrl;
+                    const iconStyle = getFileIconClass(file.category, file.ext);
+                    const isImage = file.category === 'images' && file.dataUrl;
 
                     return `
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-between group relative overflow-hidden">
-                        <!-- Card Top Preview -->
-                        <div class="relative h-36 w-full rounded-xl bg-slate-900/60 overflow-hidden flex items-center justify-center mb-3 border border-slate-800">
-                            ${isImg ? `
-                                <img src="${file.dataUrl}" alt="${file.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
-                            ` : `
-                                <i class="${iconClass} text-5xl opacity-80 group-hover:scale-110 transition-transform duration-300"></i>
-                            `}
-                            
-                            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-950/70 text-slate-300 backdrop-blur-md uppercase">
-                                ${ext}
-                            </span>
-                        </div>
+                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 group">
+                            <div class="space-y-3">
+                                ${isImage ? `
+                                    <div class="h-36 w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+                                        <img src="${file.dataUrl}" alt="${file.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </div>
+                                ` : `
+                                    <div class="h-28 w-full rounded-xl ${iconStyle.color} flex items-center justify-center text-3xl">
+                                        <i class="fa-solid ${iconStyle.icon}"></i>
+                                    </div>
+                                `}
 
-                        <!-- Card Info -->
-                        <div class="space-y-1 mb-3">
-                            <h4 class="text-sm font-bold text-slate-100 truncate dir-ltr text-right" title="${file.name}">
-                                ${file.name}
-                            </h4>
-                            <div class="flex items-center justify-between text-xs text-slate-400">
-                                <span>${formatBytes(file.size || 0)}</span>
-                                <span>${file.dateStr || 'الآن'}</span>
+                                <div>
+                                    <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate" title="${file.name}">${file.name}</h4>
+                                    <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+                                        <span>${formatBytes(file.size)}</span>
+                                        <span>•</span>
+                                        <span>${file.date || 'الآن'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between border-t border-slate-800/80 pt-2.5">
+                                <button onclick="window.previewFile('${file.id}')" class="text-xs text-brand-400 hover:text-brand-300 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>معاينة</span>
+                                </button>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors" title="تحميل">
+                                        <i class="fa-solid fa-download text-xs"></i>
+                                    </button>
+                                    <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors" title="حذف">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Card Actions -->
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
-                            <button onclick="window.previewFile('${file.id}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-brand-600 text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-eye"></i> معاينة
-                            </button>
-                            
-                            <div class="flex items-center gap-1">
-                                <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all" title="تنزيل">
-                                    <i class="fa-solid fa-download"></i>
-                                </button>
-                                <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-lg bg-slate-800/80 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-all" title="حذف">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                     `;
                 }).join('');
             } else {
-                // List View
-                container.className = "flex flex-col gap-2.5";
+                container.className = 'flex flex-col gap-2';
                 container.innerHTML = filtered.map(file => {
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    const iconClass = getFileIconClass(file.category, ext);
+                    const iconStyle = getFileIconClass(file.category, file.ext);
 
                     return `
-                    <div class="glass-card rounded-xl p-3 flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3 overflow-hidden flex-1">
-                            <div class="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center flex-shrink-0 text-xl border border-slate-800">
-                                <i class="${iconClass}"></i>
+                        <div class="glass-card rounded-xl p-3 flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 truncate">
+                                <div class="w-10 h-10 rounded-lg ${iconStyle.color} flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-solid ${iconStyle.icon}"></i>
+                                </div>
+                                <div class="truncate">
+                                    <h4 class="text-xs sm:text-sm font-bold text-slate-100 truncate">${file.name}</h4>
+                                    <p class="text-[11px] text-slate-400">${formatBytes(file.size)} • ${file.date || 'الآن'}</p>
+                                </div>
                             </div>
-                            <div class="truncate">
-                                <h4 class="text-sm font-bold text-slate-100 truncate" title="${file.name}">${file.name}</h4>
-                                <span class="text-xs text-slate-400">${formatBytes(file.size || 0)} • ${file.dateStr || 'الآن'}</span>
-                            </div>
-                        </div>
 
-                        <div class="flex items-center gap-2">
-                            <button onclick="window.previewFile('${file.id}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-brand-600 text-xs font-semibold text-slate-200 hover:text-white transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-eye"></i> معاينة
-                            </button>
-                            <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
-                            <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-all">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <button onclick="window.previewFile('${file.id}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-brand-400 text-xs font-bold transition-all">
+                                    معاينة
+                                </button>
+                                <button onclick="window.downloadFile('${file.id}')" class="p-2 rounded-lg hover:bg-slate-800 text-slate-300 transition-colors">
+                                    <i class="fa-solid fa-download text-xs"></i>
+                                </button>
+                                <button onclick="window.deleteFile('${file.id}')" class="p-2 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     `;
                 }).join('');
             }
         }
 
-        function updateStats() {
-            let totalBytes = 0;
-            const counts = { all: filesData.length, images: 0, books: 0, media: 0, other: 0 };
-
-            filesData.forEach(file => {
-                totalBytes += (file.size || 0);
-                if (counts[file.category] !== undefined) {
-                    counts[file.category]++;
-                } else {
-                    counts.other++;
-                }
-            });
-
-            document.getElementById('count-all').innerText = counts.all;
-            document.getElementById('count-images').innerText = counts.images;
-            document.getElementById('count-books').innerText = counts.books;
-            document.getElementById('count-media').innerText = counts.media;
-            document.getElementById('count-other').innerText = counts.other;
-
-            document.getElementById('totalStorageText').innerText = formatBytes(totalBytes);
-            // Cap visual progress at 100MB for reference
-            const pct = Math.min(100, Math.round((totalBytes / (100 * 1024 * 1024)) * 100));
-            document.getElementById('storageProgressBar').style.width = `${pct}%`;
-        }
-
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const uploadProgressContainer = document.getElementById('uploadProgressContainer');
-        const uploadProgressBar = document.getElementById('uploadProgressBar');
-        const uploadPercent = document.getElementById('uploadPercent');
-
-        dropZone.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'INPUT') fileInput.click();
-        });
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropZone.classList.add('drop-zone-active');
-            }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drop-zone-active');
-            }, false);
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles(files);
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-
-        document.getElementById('openUploadBtn').addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        async function handleFiles(filesList) {
+        async function handleFilesUpload(filesList) {
             if (!filesList || filesList.length === 0) return;
 
-            uploadProgressContainer.classList.remove('hidden');
-            uploadProgressContainer.classList.add('flex');
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const fileNameEl = document.getElementById('uploadFileName');
+            const fileSizeEl = document.getElementById('uploadFileSize');
+            const progressBar = document.getElementById('progressBar');
+            const statusText = document.getElementById('uploadStatusText');
 
-            const totalFiles = filesList.length;
+            progressContainer.classList.remove('hidden');
 
-            for (let i = 0; i < totalFiles; i++) {
+            for (let i = 0; i < filesList.length; i++) {
                 const file = filesList[i];
-                const pct = Math.round(((i + 1) / totalFiles) * 100);
-                uploadProgressBar.style.width = `${pct}%`;
-                uploadPercent.innerText = `${pct}%`;
+                fileNameEl.innerText = file.name;
+                fileSizeEl.innerText = formatBytes(file.size);
+                progressBar.style.width = '20%';
 
-                try {
-                    const dataUrl = await readFileAsDataURL(file);
-                    const category = getCategoryType(file.type, file.name);
-                    const now = new Date();
-                    const dateStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+                const category = getCategoryFromFile(file);
+                const reader = new FileReader();
 
-                    const newFileObj = {
-                        name: file.name,
-                        size: file.size,
-                        type: file.type || 'application/octet-stream',
-                        category: category,
-                        createdAt: Date.now(),
-                        dateStr: dateStr,
-                        dataUrl: dataUrl
+                await new Promise((resolve) => {
+                    reader.onload = async (e) => {
+                        progressBar.style.width = '70%';
+                        const dataUrl = e.target.result;
+
+                        const newFileObj = {
+                            name: file.name,
+                            size: file.size,
+                            category: category,
+                            ext: file.name.split('.').pop().toLowerCase(),
+                            type: file.type,
+                            date: new Date().toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                            dataUrl: dataUrl
+                        };
+
+                        const tempId = 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+                        await saveFileToIDB({ id: tempId, ...newFileObj });
+
+                        if (currentUser) {
+                            try {
+                                const collectionName = `room_${currentRoomCode}_files`;
+                                const filesCollection = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
+                                
+                                const cloudObj = { ...newFileObj };
+                                if (cloudObj.dataUrl && cloudObj.dataUrl.length > 800000 && category !== 'images') {
+                                    cloudObj.dataUrl = '';
+                                }
+                                await addDoc(filesCollection, cloudObj);
+                            } catch(err) {
+                                filesData.unshift({ id: tempId, ...newFileObj });
+                                saveLocalFallback();
+                                renderFiles();
+                            }
+                        } else {
+                            filesData.unshift({ id: tempId, ...newFileObj });
+                            saveLocalFallback();
+                            renderFiles();
+                        }
+
+                        progressBar.style.width = '100%';
+                        statusText.innerText = 'تم رفع الملف بنجاح!';
+                        showToast(`تم رفع (${file.name}) بنجاح`);
+                        setTimeout(resolve, 300);
                     };
 
-                    // Save locally in IDB for instant retrieval
-                    const tempId = 'file_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
-                    await saveFileToIDB({ id: tempId, ...newFileObj });
-
-                    // Push to Firestore for cross-device sharing if online
-                    if (currentUser) {
-                        const filesCollection = collection(db, 'artifacts', appId, 'public', 'data', 'shared_files');
-                        
-                        // For larger files, save compressed/metadata to cloud and full blob locally
-                        const cloudObj = { ...newFileObj };
-                        if (cloudObj.dataUrl && cloudObj.dataUrl.length > 800000) {
-                            // Firestore doc max 1MB limit check
-                            if (category !== 'images') {
-                                cloudObj.dataUrl = ''; // store metadata only on cloud for massive files
-                            }
-                        }
-                        
-                        await addDoc(filesCollection, cloudObj);
-                    } else {
-                        // Offline mode fallback
-                        filesData.unshift({ id: tempId, ...newFileObj });
-                        saveLocalFallback();
-                        renderFiles();
-                        updateStats();
-                    }
-
-                } catch (err) {
-                    console.error("Upload error:", err);
-                    showToast("تعذر رفع الملف: " + file.name, "error");
-                }
+                    reader.readAsDataURL(file);
+                });
             }
 
             setTimeout(() => {
-                uploadProgressContainer.classList.add('hidden');
-                uploadProgressContainer.classList.remove('flex');
-                uploadProgressBar.style.width = '0%';
-                fileInput.value = '';
-                showToast(`تم رفع ${totalFiles} ملف بنجاح!`);
-            }, 400);
-        }
-
-        function readFileAsDataURL(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (e) => reject(e);
-                reader.readAsDataURL(file);
-            });
+                progressContainer.classList.add('hidden');
+                document.getElementById('uploadModal').classList.add('hidden');
+                progressBar.style.width = '0%';
+            }, 500);
         }
 
         window.previewFile = async function(id) {
             let file = filesData.find(f => f.id === id);
-            if (!file) return;
+            if (!file) {
+                file = await getFileFromIDB(id);
+            }
 
-            // Check IndexedDB if dataUrl missing (for large cloud synced docs)
-            if (!file.dataUrl) {
-                const cached = await getFileFromIDB(id);
-                if (cached && cached.dataUrl) {
-                    file.dataUrl = cached.dataUrl;
-                }
+            if (!file) {
+                showToast("تعذر جلب معاينة الملف", "error");
+                return;
             }
 
             const modal = document.getElementById('previewModal');
-            const previewName = document.getElementById('previewFileName');
-            const previewIcon = document.getElementById('previewFileIcon');
-            const previewContent = document.getElementById('previewContent');
-            const previewSize = document.getElementById('previewFileSize');
-            const previewDownloadBtn = document.getElementById('previewDownloadBtn');
+            const title = document.getElementById('previewTitle');
+            const body = document.getElementById('previewBody');
+            const downloadBtn = document.getElementById('downloadPreviewBtn');
 
-            previewName.innerText = file.name;
-            previewSize.innerText = `الحجم: ${formatBytes(file.size || 0)}`;
-            const ext = file.name.split('.').pop().toLowerCase();
-            previewIcon.className = getFileIconClass(file.category, ext) + ' text-xl';
+            title.innerText = file.name;
+            downloadBtn.onclick = () => window.downloadFile(id);
 
-            // Download Link Setup
-            if (file.dataUrl) {
-                previewDownloadBtn.href = file.dataUrl;
-                previewDownloadBtn.download = file.name;
-            } else {
-                previewDownloadBtn.href = '#';
-                previewDownloadBtn.onclick = () => alert("الملف متاح على الجهاز الأصلي فقط أو يحتاج إعادة تحميل.");
-            }
+            body.innerHTML = '';
 
-            // Preview Type Switch
             if (file.category === 'images' && file.dataUrl) {
-                previewContent.innerHTML = `<img src="${file.dataUrl}" class="max-h-[60vh] max-w-full rounded-xl object-contain shadow-xl">`;
+                body.innerHTML = `<img src="${file.dataUrl}" alt="${file.name}" class="max-h-[70vh] rounded-xl object-contain shadow-xl">`;
             } else if (file.category === 'media' && file.dataUrl) {
-                if (file.type.startsWith('video') || ['mp4', 'mkv'].includes(ext)) {
-                    previewContent.innerHTML = `<video controls src="${file.dataUrl}" class="max-h-[60vh] max-w-full rounded-xl"></video>`;
+                if (file.type.includes('video')) {
+                    body.innerHTML = `<video controls src="${file.dataUrl}" class="max-h-[70vh] w-full rounded-xl"></video>`;
                 } else {
-                    previewContent.innerHTML = `
+                    body.innerHTML = `
                         <div class="text-center space-y-4 p-8">
-                            <i class="fa-solid fa-compact-disc text-6xl text-purple-400 animate-spin" style="animation-duration: 6s;"></i>
+                            <i class="fa-solid fa-music text-5xl text-purple-400"></i>
+                            <p class="text-sm font-bold text-slate-200">${file.name}</p>
                             <audio controls src="${file.dataUrl}" class="w-full max-w-md mx-auto"></audio>
                         </div>
                     `;
                 }
-            } else if (ext === 'txt' && file.dataUrl) {
-                try {
-                    const text = atob(file.dataUrl.split(',')[1]);
-                    previewContent.innerHTML = `<pre class="p-4 bg-slate-900 rounded-xl text-xs text-slate-300 w-full overflow-auto max-h-[50vh] text-right font-sans">${text}</pre>`;
-                } catch(e) {
-                    previewContent.innerHTML = `<p class="text-slate-400 text-sm">عذرًا، لا يمكن عرض نص هذا الملف مباشرة.</p>`;
-                }
             } else {
-                previewContent.innerHTML = `
-                    <div class="text-center space-y-3">
-                        <i class="${getFileIconClass(file.category, ext)} text-6xl"></i>
-                        <p class="text-slate-300 text-sm font-semibold">المعاينة المباشرة غير ممتدة لهذا النوع</p>
-                        <p class="text-slate-500 text-xs">اضغط على زر التنزيل بالأسفل لفتح الملف على جهازك</p>
+                const iconStyle = getFileIconClass(file.category, file.ext);
+                body.innerHTML = `
+                    <div class="text-center space-y-4 p-8">
+                        <div class="w-20 h-20 rounded-3xl ${iconStyle.color} flex items-center justify-center text-4xl mx-auto">
+                            <i class="fa-solid ${iconStyle.icon}"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-bold text-slate-200">${file.name}</h4>
+                            <p class="text-xs text-slate-400 mt-1">${formatBytes(file.size)} • ملف ${file.ext.toUpperCase()}</p>
+                        </div>
                     </div>
                 `;
             }
@@ -852,157 +783,221 @@
 
         window.downloadFile = async function(id) {
             let file = filesData.find(f => f.id === id);
-            if (!file) return;
-
-            if (!file.dataUrl) {
-                const cached = await getFileFromIDB(id);
-                if (cached && cached.dataUrl) file.dataUrl = cached.dataUrl;
+            if (!file || !file.dataUrl) {
+                file = await getFileFromIDB(id);
             }
 
-            if (file.dataUrl) {
-                const a = document.createElement('a');
-                a.href = file.dataUrl;
-                a.download = file.name;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                showToast(`جاري تنزيل ${file.name}`);
-            } else {
-                showToast("الملف متوفر للتحميل من الجهاز صاحب الرفع الأصلي", "error");
+            if (!file || !file.dataUrl) {
+                showToast("رابط التحميل غير متوفر لهذا الملف", "error");
+                return;
             }
+
+            const a = document.createElement('a');
+            a.href = file.dataUrl;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("جاري بدء التنزيل...");
         };
 
         window.deleteFile = async function(id) {
             if (currentUser) {
                 try {
-                    const fileDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'shared_files', id);
+                    const fileDocRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${currentRoomCode}_files`, id);
                     await deleteDoc(fileDocRef);
                     showToast("تم حذف الملف بنجاح");
                 } catch (e) {
                     filesData = filesData.filter(f => f.id !== id);
                     saveLocalFallback();
                     renderFiles();
-                    updateStats();
                     showToast("تم حذف الملف محلياً");
                 }
             } else {
                 filesData = filesData.filter(f => f.id !== id);
                 saveLocalFallback();
                 renderFiles();
-                updateStats();
                 showToast("تم حذف الملف");
             }
         };
 
-        // Modal Close Listeners
-        document.getElementById('closePreviewBtn').addEventListener('click', () => {
-            document.getElementById('previewModal').classList.add('hidden');
-        });
-
-        document.querySelectorAll('.nav-filter').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.nav-filter').forEach(b => {
-                    b.className = "nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all";
-                });
-                const target = e.currentTarget;
-                target.className = "nav-filter w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-brand-600 text-white shadow-md shadow-brand-600/20";
-                
-                currentCategory = target.getAttribute('data-category');
-                const titles = {
-                    all: 'جميع الملفات',
-                    images: 'الصور والوسائط',
-                    books: 'الكتب والمستندات',
-                    media: 'الصوتيات بالفيديو',
-                    other: 'أرشيف وملفات أخرى'
-                };
-                document.getElementById('currentCategoryTitle').innerText = titles[currentCategory] || 'الملفات';
-                renderFiles();
-            });
-        });
-
-        // Search inputs listener
-        ['searchInput', 'searchInputMobile'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                renderFiles();
-            });
-        });
-
-        document.getElementById('sortSelect').addEventListener('change', () => {
-            renderFiles();
-        });
-
-        // View Mode Toggles
-        document.getElementById('viewGridBtn').addEventListener('click', () => {
-            viewMode = 'grid';
-            document.getElementById('viewGridBtn').className = "p-1.5 rounded-lg text-brand-400 bg-slate-800 transition-all";
-            document.getElementById('viewListBtn').className = "p-1.5 rounded-lg text-slate-400 hover:text-white transition-all";
-            renderFiles();
-        });
-
-        document.getElementById('viewListBtn').addEventListener('click', () => {
-            viewMode = 'list';
-            document.getElementById('viewListBtn').className = "p-1.5 rounded-lg text-brand-400 bg-slate-800 transition-all";
-            document.getElementById('viewGridBtn').className = "p-1.5 rounded-lg text-slate-400 hover:text-white transition-all";
-            renderFiles();
-        });
-
-        // Share Platform Modal logic
-        const shareHubBtn = document.getElementById('shareHubBtn');
-        const shareHubModal = document.getElementById('shareHubModal');
-        const closeShareHubBtn = document.getElementById('closeShareHubBtn');
-        const shareUrlInput = document.getElementById('shareUrlInput');
-        const copyShareUrlBtn = document.getElementById('copyShareUrlBtn');
-        const qrCodeContainer = document.getElementById('qrCodeContainer');
-
-        shareHubBtn.addEventListener('click', () => {
-            const currentUrl = window.location.href;
-            shareUrlInput.value = currentUrl;
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
             
-            // Generate QR Code via Google API
-            qrCodeContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}" alt="QR Code" class="w-36 h-36">`;
-            
-            shareHubModal.classList.remove('hidden');
-        });
+            const isError = type === 'error';
+            toast.className = `px-4 py-3 rounded-xl text-xs font-bold text-white shadow-xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${
+                isError ? 'bg-rose-600 border border-rose-500' : 'bg-slate-800 border border-brand-500/40'
+            }`;
 
-        closeShareHubBtn.addEventListener('click', () => {
-            shareHubModal.classList.add('hidden');
-        });
+            toast.innerHTML = `
+                <i class="fa-solid ${isError ? 'fa-circle-exclamation text-rose-300' : 'fa-circle-check text-brand-400'}"></i>
+                <span>${message}</span>
+            `;
 
-        copyShareUrlBtn.addEventListener('click', () => {
-            shareUrlInput.select();
-            document.execCommand('copy');
-            showToast("تم نسخ رابط المنصة للمحافظة والتمكين على الأجهزة الأخرى!");
-        });
-
-        document.getElementById('previewShareBtn').addEventListener('click', () => {
-            shareHubBtn.click();
-        });
-
-        // Custom Toast Helper
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMessage.innerText = message;
-            if (type === 'error') {
-                toastIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400"></i>`;
-            } else {
-                toastIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
-            }
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
+            container.appendChild(toast);
 
             setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // Initialize Firebase on load
-        window.addEventListener('load', () => {
+        window.addEventListener('DOMContentLoaded', () => {
             initAuth();
+
+            // Search input listener
+            document.getElementById('searchInput').addEventListener('input', renderFiles);
+
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.category-btn').forEach(b => {
+                        b.classList.remove('bg-brand-600', 'text-white');
+                        b.classList.add('text-slate-400');
+                    });
+                    e.target.classList.add('bg-brand-600', 'text-white');
+                    e.target.classList.remove('text-slate-400');
+
+                    currentCategory = e.target.dataset.category;
+                    renderFiles();
+                });
+            });
+
+            // View toggle
+            document.getElementById('viewGridBtn').addEventListener('click', () => {
+                viewMode = 'grid';
+                document.getElementById('viewGridBtn').className = 'p-2 rounded-lg bg-slate-800 text-brand-400 transition-all';
+                document.getElementById('viewListBtn').className = 'p-2 rounded-lg text-slate-400 hover:text-white transition-all';
+                renderFiles();
+            });
+
+            document.getElementById('viewListBtn').addEventListener('click', () => {
+                viewMode = 'list';
+                document.getElementById('viewListBtn').className = 'p-2 rounded-lg bg-slate-800 text-brand-400 transition-all';
+                document.getElementById('viewGridBtn').className = 'p-2 rounded-lg text-slate-400 hover:text-white transition-all';
+                renderFiles();
+            });
+
+            // Modals Logic
+            const uploadModal = document.getElementById('uploadModal');
+            const openUploadBtn = document.getElementById('openUploadBtn');
+            const emptyUploadBtn = document.getElementById('emptyUploadBtn');
+            const closeUploadModalBtn = document.getElementById('closeUploadModalBtn');
+            const cancelUploadBtn = document.getElementById('cancelUploadBtn');
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+
+            const openUpload = () => uploadModal.classList.remove('hidden');
+            const closeUpload = () => uploadModal.classList.add('hidden');
+
+            openUploadBtn.addEventListener('click', openUpload);
+            emptyUploadBtn.addEventListener('click', openUpload);
+            closeUploadModalBtn.addEventListener('click', closeUpload);
+            cancelUploadBtn.addEventListener('click', closeUpload);
+
+            dropzone.addEventListener('click', () => fileInput.click());
+
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('border-brand-500', 'bg-slate-900/80');
+            });
+
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('border-brand-500', 'bg-slate-900/80');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFilesUpload(e.dataTransfer.files);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFilesUpload(e.target.files);
+                }
+            });
+
+            // Join PIN Modal
+            const joinRoomModal = document.getElementById('joinRoomModal');
+            const openJoinModalBtn = document.getElementById('openJoinModalBtn');
+            const closeJoinRoomBtn = document.getElementById('closeJoinRoomBtn');
+            const confirmJoinRoomBtn = document.getElementById('confirmJoinRoomBtn');
+            const generateNewRoomBtn = document.getElementById('generateNewRoomBtn');
+            const pinCodeInput = document.getElementById('pinCodeInput');
+
+            openJoinModalBtn.addEventListener('click', () => {
+                pinCodeInput.value = '';
+                joinRoomModal.classList.remove('hidden');
+                pinCodeInput.focus();
+            });
+
+            closeJoinRoomBtn.addEventListener('click', () => joinRoomModal.classList.add('hidden'));
+
+            confirmJoinRoomBtn.addEventListener('click', () => {
+                const code = pinCodeInput.value.trim();
+                if (/^\d{4}$/.test(code)) {
+                    connectToRoom(code);
+                    joinRoomModal.classList.add('hidden');
+                    showToast(`تم الاتصال بالغرفة الرقمية (${code})`);
+                } else {
+                    showToast("يرجى إدخال كود مكون من 4 أرقام", "error");
+                }
+            });
+
+            generateNewRoomBtn.addEventListener('click', () => {
+                const newCode = generate4DigitCode();
+                connectToRoom(newCode);
+                joinRoomModal.classList.add('hidden');
+                showToast(`تم توليد كود جديد: (${newCode})`);
+            });
+
+            // QR Share Modal
+            const shareHubBtn = document.getElementById('shareHubBtn');
+            const shareHubModal = document.getElementById('shareHubModal');
+            const closeShareHubBtn = document.getElementById('closeShareHubBtn');
+            const shareUrlInput = document.getElementById('shareUrlInput');
+            const copyShareUrlBtn = document.getElementById('copyShareUrlBtn');
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+
+            shareHubBtn.addEventListener('click', () => {
+                const currentUrl = window.location.origin + window.location.pathname + '#' + currentRoomCode;
+                shareUrlInput.value = currentUrl;
+                qrCodeContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}" alt="QR Code" class="w-36 h-36">`;
+                shareHubModal.classList.remove('hidden');
+            });
+
+            closeShareHubBtn.addEventListener('click', () => shareHubModal.classList.add('hidden'));
+
+            copyShareUrlBtn.addEventListener('click', () => {
+                shareUrlInput.select();
+                try {
+                    document.execCommand('copy');
+                    showToast("تم نسخ رابط الغرفة بنجاح!");
+                } catch(err) {
+                    showToast("عذراً، فشل نسخ الرابط تلقائياً", "error");
+                }
+            });
+
+            // Preview Modal close
+            document.getElementById('closePreviewBtn').addEventListener('click', () => {
+                document.getElementById('previewModal').classList.add('hidden');
+            });
+
+            window.addEventListener('hashchange', () => {
+                const hash = window.location.hash.replace('#', '').trim();
+                if (/^\d{4}$/.test(hash) && hash !== currentRoomCode) {
+                    connectToRoom(hash);
+                    showToast(`تم الانضمام للغرفة (${hash})`);
+                }
+            });
         });
     </script>
 </body>
